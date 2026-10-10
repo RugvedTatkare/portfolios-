@@ -65,10 +65,11 @@ function WallArt({side,z,title,sub}:{side:-1|1;z:number;title:string;sub:string}
 
 type Project = (typeof portfolio.projects)[number];
 
-function ProjectLocker({ project, index, position, onSelect }: {
+function ProjectLocker({ project, index, position, rotationY = 0, onSelect }: {
   project: Project;
   index: number;
   position: [number, number, number];
+  rotationY?: number;
   onSelect: () => void;
 }) {
   const teamColors = ['#1e684f', '#27675e', '#2d5065'];
@@ -78,7 +79,7 @@ function ProjectLocker({ project, index, position, onSelect }: {
     <Float speed={0.4 + index * 0.08} floatIntensity={0.035} rotationIntensity={0.006}>
       <group
         position={position}
-        rotation={[0, index === 0 ? 0.045 : index === 2 ? -0.045 : 0, 0]}
+        rotation={[0, rotationY + (index === 0 ? 0.018 : index === 2 ? -0.018 : 0), 0]}
         onClick={(event) => { event.stopPropagation(); onSelect(); }}
         onPointerOver={(event) => { event.stopPropagation(); document.body.style.cursor = 'pointer'; }}
         onPointerOut={() => { document.body.style.cursor = 'auto'; }}
@@ -268,7 +269,8 @@ function LockerRoom({ onSelectProject }: { onSelectProject: (number: string) => 
       </mesh>
       {sidePositions.map((z, i) => (
         <group key={z}>
-          <SideSportsLocker side={-1} z={z} number={i} />
+          {/* These three positions are reserved for project-filled sports lockers. */}
+          {!([1, 3, 5] as number[]).includes(i) && <SideSportsLocker side={-1} z={z} number={i} />}
           <SideSportsLocker side={1} z={z} number={i + 8} />
           {[-1, 1].map((side) => (
             <mesh key={side} position={[side * 8.9, 0.42, z]} castShadow receiveShadow>
@@ -288,25 +290,20 @@ function LockerRoom({ onSelectProject }: { onSelectProject: (number: string) => 
           <pointLight position={[0, -0.8, 0]} intensity={1.3} distance={13} color="#d9edfb" />
         </group>
       ))}
-      {/* Project lockers are the feature wall: kit details + an interactive data display */}
-      {portfolio.projects.map((project, i) => (
-        <group key={project.number}>
+      {/* Project information is built into three full sports lockers along the left wall. */}
+      {portfolio.projects.map((project, i) => {
+        const projectZ = [-65.5, -76.5, -87.5][i];
+        return (
           <ProjectLocker
+            key={project.number}
             project={project}
             index={i}
-            position={lockerPositions[i]}
+            position={[-11.64, 2.15, projectZ]}
+            rotationY={Math.PI / 2}
             onSelect={() => onSelectProject(project.number)}
           />
-          <mesh position={[lockerPositions[i][0], 0.42, lockerPositions[i][2] - 1.2]} castShadow receiveShadow>
-            <boxGeometry args={[3.55, 0.84, 2.1]} />
-            <meshStandardMaterial color="#879083" roughness={0.5} metalness={0.12} />
-          </mesh>
-          <mesh position={[lockerPositions[i][0], 0.86, lockerPositions[i][2] - 1.2]}>
-            <boxGeometry args={[3.28, 0.035, 1.8]} />
-            <meshStandardMaterial color="#c9d6c5" roughness={0.48} />
-          </mesh>
-        </group>
-      ))}
+        );
+      })}
       <mesh position={[0, 5.9, -108.0]}>
         <boxGeometry args={[12.8, 0.36, 0.55]} />
         <meshStandardMaterial color="#a6b8a8" metalness={0.22} roughness={0.43} />
