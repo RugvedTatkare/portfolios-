@@ -12,6 +12,7 @@ export default function App() {
   const [progress, setProgress] = useState(0);
   const [selectedProjectNumber, setSelectedProjectNumber] = useState<string | null>(null);
   const [matchPlaying, setMatchPlaying] = useState(true);
+  const [exploreMode, setExploreMode] = useState(false);
   const lenisRef = useRef<Lenis | null>(null);
   const progressRef = useRef(0);
   const snapLockedRef = useRef(false);
@@ -20,8 +21,11 @@ export default function App() {
   const selectedProject = portfolio.projects.find((project) => project.number === selectedProjectNumber) ?? null;
   const closeProject = useCallback(() => setSelectedProjectNumber(null), []);
   const toggleMatch = useCallback(() => setMatchPlaying((playing) => !playing), []);
+  const toggleExplore = useCallback(() => setExploreMode((active) => !active), []);
+  const exitExplore = useCallback(() => setExploreMode(false), []);
 
   const navigateToPhase = useCallback((index: number) => {
+    setExploreMode(false);
     const boundedIndex = Math.max(0, Math.min(PHASE_RATIOS.length - 1, index));
     const lenis = lenisRef.current;
     if (!lenis) return;
@@ -80,13 +84,13 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (selectedProjectNumber) {
+    if (selectedProjectNumber || exploreMode) {
       lenisRef.current?.stop();
       snapLockedRef.current = false;
     } else if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       lenisRef.current?.start();
     }
-  }, [selectedProjectNumber]);
+  }, [selectedProjectNumber, exploreMode]);
 
   useEffect(() => {
     const isInsideProjectDialog = (target: EventTarget | null) =>
@@ -120,6 +124,10 @@ export default function App() {
     };
 
     const handleWheel = (event: WheelEvent) => {
+      if (exploreMode) {
+        event.preventDefault();
+        return;
+      }
       if (selectedProjectNumber) {
         // The project dialog itself stays scrollable; the scene behind it stays still.
         if (isInsideProjectDialog(event.target)) return;
@@ -152,6 +160,10 @@ export default function App() {
       touchConsumedByCopy = false;
     };
     const handleTouchMove = (event: TouchEvent) => {
+      if (exploreMode) {
+        event.preventDefault();
+        return;
+      }
       if (selectedProjectNumber && isInsideProjectDialog(event.target)) return;
       if (touchStartY === null || isInteractiveTarget(touchStartTarget)) return;
       const currentY = event.touches[0]?.clientY;
@@ -163,6 +175,13 @@ export default function App() {
       event.preventDefault();
     };
     const handleTouchEnd = (event: TouchEvent) => {
+      if (exploreMode) {
+        touchStartY = null;
+        lastTouchY = null;
+        touchStartTarget = null;
+        touchConsumedByCopy = false;
+        return;
+      }
       if (selectedProjectNumber && isInsideProjectDialog(touchStartTarget)) {
         touchStartY = null;
         lastTouchY = null;
@@ -181,6 +200,13 @@ export default function App() {
     };
 
     const handleKeyDown = (event: KeyboardEvent) => {
+      if (exploreMode) {
+        if (event.key === 'Escape') {
+          event.preventDefault();
+          exitExplore();
+        }
+        return;
+      }
       if (selectedProjectNumber || event.altKey || event.ctrlKey || event.metaKey || isInteractiveTarget(event.target)) return;
       const down = event.key === 'ArrowDown' || event.key === 'PageDown' || event.key === ' ';
       const up = event.key === 'ArrowUp' || event.key === 'PageUp';
@@ -209,7 +235,7 @@ export default function App() {
       window.removeEventListener('keydown', handleKeyDown, true);
       if (wheelResetTimerRef.current !== null) window.clearTimeout(wheelResetTimerRef.current);
     };
-  }, [navigateToPhase, selectedProjectNumber]);
+  }, [navigateToPhase, selectedProjectNumber, exploreMode, exitExplore]);
 
   return (
     <main className="site" id="top">
@@ -220,7 +246,7 @@ export default function App() {
           camera={{ position: [0, 2.3, 11], fov: 48, near: 0.1, far: 260 }}
           gl={{ antialias: true, powerPreference: 'high-performance' }}
         >
-          <Scene progress={progress} onSelectProject={setSelectedProjectNumber} matchPlaying={matchPlaying} />
+          <Scene progress={progress} onSelectProject={setSelectedProjectNumber} matchPlaying={matchPlaying} exploreMode={exploreMode} />
         </Canvas>
       </div>
       <Overlay
@@ -231,6 +257,8 @@ export default function App() {
         onCloseProject={closeProject}
         matchPlaying={matchPlaying}
         onToggleMatch={toggleMatch}
+        exploreMode={exploreMode}
+        onToggleExplore={toggleExplore}
       />
       <div className="scroll-track">
         <section className="scroll-space scroll-space--intro" />
