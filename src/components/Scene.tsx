@@ -1,3 +1,4 @@
+import { portfolio } from '../data/portfolio';
 import { useEffect, useMemo, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { Environment, Float, Sparkles, Text } from '@react-three/drei';
@@ -62,16 +63,219 @@ function WallArt({side,z,title,sub}:{side:-1|1;z:number;title:string;sub:string}
   </group>
 }
 
-function ProjectScreen({position,index}:{position:[number,number,number];index:number}){
-  const labels=[['LEGAL AID','PLATFORM'],['DATA','VISUALIZATION'],['ENGRAVA','E-COMMERCE']];
-  const [a,b]=labels[index%3];
-  return <group position={position} rotation={[0,index===1?.08:-.08,0]}>
-    <mesh position={[0,0,-.12]} castShadow><boxGeometry args={[2.8,1.85,.14]}/><meshStandardMaterial color="#11120f" metalness={.35} roughness={.32}/></mesh>
-    <mesh position={[0,0,-.035]}><boxGeometry args={[2.58,1.62,.025]}/><meshStandardMaterial color={index===0?'#17272a':index===1?'#1e2924':'#27241f'} emissive={index===1?'#101c17':'#070706'} emissiveIntensity={.4}/></mesh>
-    <Text position={[-1.05,.58,.01]} anchorX="left" fontSize={.11} color="#f0eadb">{a}</Text>
-    <Text position={[-1.05,.38,.01]} anchorX="left" fontSize={.11} color="#c7a46b">{b}</Text>
-    {Array.from({length:5},(_,i)=><mesh key={i} position={[-.82+i*.35,-.25,.01]}><boxGeometry args={[.22,.55+(i%2)*.25,.012]}/><meshBasicMaterial color={i===3?'#d6e16a':'#718779'} transparent opacity={.72}/></mesh>)}
-  </group>
+type Project = (typeof portfolio.projects)[number];
+
+function ProjectLocker({ project, index, position }: {
+  project: Project;
+  index: number;
+  position: [number, number, number];
+}) {
+  const panelColors = ['#152326', '#18231f', '#25231e'];
+  const barHeights = [0.24, 0.45, 0.32, 0.62, 0.4, 0.72, 0.53];
+  return (
+    <Float speed={0.55 + index * 0.12} floatIntensity={0.1} rotationIntensity={0.015}>
+      <group position={position} rotation={[0, index === 0 ? 0.055 : index === 2 ? -0.055 : 0, 0]}>
+        <mesh position={[0, 0, -0.1]} castShadow>
+          <boxGeometry args={[4.25, 3.48, 0.24]} />
+          <meshStandardMaterial color="#222720" metalness={0.62} roughness={0.3} />
+        </mesh>
+        <mesh position={[0, 0, 0.035]}>
+          <boxGeometry args={[4.02, 3.24, 0.035]} />
+          <meshStandardMaterial color={panelColors[index % panelColors.length]} emissive={panelColors[index % panelColors.length]} emissiveIntensity={0.22} roughness={0.45} />
+        </mesh>
+        <mesh position={[0, 0, 0.07]}>
+          <boxGeometry args={[3.9, 3.1, 0.025]} />
+          <meshPhysicalMaterial color="#101612" metalness={0.2} roughness={0.38} clearcoat={0.45} />
+        </mesh>
+        {[-1, 1].map((side) => (
+          <mesh key={side} position={[side * 2.1, 0, 0.13]}>
+            <boxGeometry args={[0.025, 3.5, 0.025]} />
+            <meshBasicMaterial color={index === 1 ? "#d8dda0" : "#d5b57b"} />
+          </mesh>
+        ))}
+        {[-1, 1].map((side) => (
+          <mesh key={side} position={[0, side * 1.73, 0.13]}>
+            <boxGeometry args={[4.25, 0.025, 0.025]} />
+            <meshBasicMaterial color="#d5b57b" />
+          </mesh>
+        ))}
+        <Text position={[-1.72, 1.25, 0.17]} anchorX="left" fontSize={0.095} color="#cbb181" letterSpacing={0.14}>
+          PROJECT / {project.number}
+        </Text>
+        <Text position={[-1.72, 0.83, 0.17]} anchorX="left" fontSize={0.19} maxWidth={3.45} lineHeight={1.05} color="#f3eee2">
+          {project.title}
+        </Text>
+        <Text position={[-1.72, 0.39, 0.17]} anchorX="left" fontSize={0.082} maxWidth={3.3} color="#c7c4b8" letterSpacing={0.04}>
+          {project.type.toUpperCase()}
+        </Text>
+        <mesh position={[-0.94, -0.08, 0.17]}><boxGeometry args={[1.56, 0.018, 0.012]} /><meshBasicMaterial color="#c5a46c" /></mesh>
+        <Text position={[-1.72, -0.33, 0.17]} anchorX="left" fontSize={0.09} maxWidth={3.38} lineHeight={1.25} color="#e0dbcf">
+          {project.metric}
+        </Text>
+        <Text position={[-1.72, -0.7, 0.17]} anchorX="left" fontSize={0.075} maxWidth={3.45} lineHeight={1.27} color="#a9aea5">
+          {project.description}
+        </Text>
+        {barHeights.map((height, i) => (
+          <mesh key={i} position={[-1.58 + i * 0.18, -1.34 + height * 0.48, 0.17]}>
+            <boxGeometry args={[0.095, height * 0.72, 0.018]} />
+            <meshBasicMaterial color={i === 5 ? "#d5dba0" : "#789183"} transparent opacity={0.76} />
+          </mesh>
+        ))}
+        <Text position={[0.05, -1.39, 0.17]} anchorX="left" fontSize={0.065} maxWidth={2.8} color="#aaa99d">
+          {project.stack}
+        </Text>
+      </group>
+    </Float>
+  );
+}
+
+function LockerRoom() {
+  const lockerPositions: [number, number, number][] = [
+    [-6.35, 2.82, -82.2],
+    [0, 3.12, -84.0],
+    [6.35, 2.82, -82.2],
+  ];
+  const doorZ = Array.from({ length: 9 }, (_, i) => -59 - i * 5.6);
+  return (
+    <group>
+      <mesh position={[0, -0.16, -81.5]} receiveShadow>
+        <boxGeometry args={[24, 0.32, 58]} />
+        <Concrete color="#55554f" roughness={0.52} repeat={7} />
+      </mesh>
+      <mesh position={[-12, 3.35, -81.5]} receiveShadow>
+        <boxGeometry args={[0.3, 6.7, 58]} />
+        <Concrete color="#66645c" roughness={0.75} repeat={4} />
+      </mesh>
+      <mesh position={[12, 3.35, -81.5]} receiveShadow>
+        <boxGeometry args={[0.3, 6.7, 58]} />
+        <Concrete color="#66645c" roughness={0.75} repeat={4} />
+      </mesh>
+      <mesh position={[-8.35, 6.75, -81.5]}>
+        <boxGeometry args={[7.3, 0.2, 58]} />
+        <Concrete color="#373932" roughness={0.83} repeat={5} />
+      </mesh>
+      <mesh position={[8.35, 6.75, -81.5]}>
+        <boxGeometry args={[7.3, 0.2, 58]} />
+        <Concrete color="#373932" roughness={0.83} repeat={5} />
+      </mesh>
+      <mesh position={[0, 6.78, -81.5]}>
+        <boxGeometry args={[8.7, 0.06, 58]} />
+        <meshPhysicalMaterial color="#8d9a9b" roughness={0.2} metalness={0.1} transparent opacity={0.22} />
+      </mesh>
+      {[-11.7, 11.7].map((x, sideIndex) => (
+        <group key={x}>
+          {doorZ.map((z, i) => (
+            <group key={z} position={[x, 3.25, z]} rotation={[0, sideIndex === 0 ? Math.PI / 2 : -Math.PI / 2, 0]}>
+              <mesh>
+                <boxGeometry args={[2.05, 2.38, 0.1]} />
+                <meshStandardMaterial color={i % 2 ? "#77766e" : "#696b63"} metalness={0.35} roughness={0.4} />
+              </mesh>
+              <mesh position={[0, 0, 0.06]}>
+                <boxGeometry args={[1.83, 2.15, 0.025]} />
+                <meshStandardMaterial color="#292c27" metalness={0.22} roughness={0.5} />
+              </mesh>
+              <mesh position={[0.7, 0, 0.08]}>
+                <boxGeometry args={[0.035, 1.45, 0.018]} />
+                <meshBasicMaterial color="#c6a16a" />
+              </mesh>
+              <mesh position={[-0.66, 0.73, 0.08]}>
+                <boxGeometry args={[0.22, 0.035, 0.018]} />
+                <meshBasicMaterial color="#8d9c8d" />
+              </mesh>
+            </group>
+          ))}
+          {[-61, -73, -85, -97, -105].map((z) => (
+            <group key={z}>
+              <mesh position={[x, 3.0, z]}>
+                <boxGeometry args={[0.055, 4.35, 0.055]} />
+                <meshBasicMaterial color="#e5c28a" />
+              </mesh>
+              <pointLight position={[x * 0.97, 3.15, z]} intensity={0.72} distance={5.5} color="#e8c98e" />
+            </group>
+          ))}
+        </group>
+      ))}
+      <mesh position={[0, 5.95, -107.8]}>
+        <boxGeometry args={[12.8, 0.45, 0.55]} />
+        <Concrete color="#77756b" roughness={0.6} />
+      </mesh>
+      {[-6.25, 6.25].map((x) => (
+        <mesh key={x} position={[x, 3.15, -107.8]} castShadow>
+          <boxGeometry args={[0.45, 5.8, 0.55]} />
+          <Concrete color="#858176" roughness={0.55} />
+        </mesh>
+      ))}
+      <Text position={[0, 5.3, -107.45]} fontSize={0.28} color="#efe6d3" letterSpacing={0.12}>
+        THE NEXT POINT
+      </Text>
+      <Text position={[0, 4.85, -107.45]} fontSize={0.105} color="#c5bca9" letterSpacing={0.04}>
+        THROUGH THE TUNNEL / TO THE COURT
+      </Text>
+      {portfolio.projects.map((project, i) => (
+        <group key={project.number}>
+          <ProjectLocker project={project} index={i} position={lockerPositions[i]} />
+          <mesh position={[lockerPositions[i][0], 0.42, lockerPositions[i][2] - 1.15]} castShadow receiveShadow>
+            <boxGeometry args={[3.45, 0.82, 2.1]} />
+            <meshStandardMaterial color="#55564f" roughness={0.5} metalness={0.28} />
+          </mesh>
+          <mesh position={[lockerPositions[i][0], 0.85, lockerPositions[i][2] - 1.15]}>
+            <boxGeometry args={[3.16, 0.035, 1.8]} />
+            <meshBasicMaterial color="#c9ac7e" />
+          </mesh>
+        </group>
+      ))}
+      <pointLight position={[0, 5.7, -76]} intensity={4.5} distance={28} color="#f2d4a0" />
+      <pointLight position={[0, 5.7, -101]} intensity={3.5} distance={20} color="#ead3aa" />
+    </group>
+  );
+}
+
+function ApproachTunnel() {
+  const lightZ = [-113, -120, -127, -134];
+  return (
+    <group>
+      <mesh position={[0, -0.12, -123.3]} receiveShadow>
+        <boxGeometry args={[13.2, 0.28, 31]} />
+        <Concrete color="#4a4b45" roughness={0.52} repeat={5} />
+      </mesh>
+      {[-6.65, 6.65].map((x, side) => (
+        <group key={x}>
+          <mesh position={[x, 3.25, -123.3]}>
+            <boxGeometry args={[0.34, 6.5, 31]} />
+            <Concrete color="#555750" roughness={0.72} repeat={3} />
+          </mesh>
+          {lightZ.map((z) => (
+            <group key={z} position={[x * 0.94, 5.8, z]}>
+              <mesh><boxGeometry args={[0.07, 0.07, 3.8]} /><meshBasicMaterial color="#f0d09b" /></mesh>
+              <pointLight position={[0, -0.65, 0]} intensity={1.25} distance={7} color="#f0cc90" />
+            </group>
+          ))}
+        </group>
+      ))}
+      <mesh position={[-4.5, 6.35, -123.3]}>
+        <boxGeometry args={[4.2, 0.18, 31]} />
+        <Concrete color="#363831" roughness={0.82} />
+      </mesh>
+      <mesh position={[4.5, 6.35, -123.3]}>
+        <boxGeometry args={[4.2, 0.18, 31]} />
+        <Concrete color="#363831" roughness={0.82} />
+      </mesh>
+      <mesh position={[0, 6.5, -136.4]}>
+        <boxGeometry args={[13.2, 0.5, 0.65]} />
+        <meshStandardMaterial color="#6f6b60" metalness={0.4} roughness={0.38} />
+      </mesh>
+      {[-6.35, 6.35].map((x) => (
+        <mesh key={x} position={[x, 3.15, -136.4]}>
+          <boxGeometry args={[0.48, 6.2, 0.65]} />
+          <meshStandardMaterial color="#7b766a" metalness={0.28} roughness={0.42} />
+        </mesh>
+      ))}
+      <Text position={[0, 5.72, -136.05]} fontSize={0.31} color="#f0e5d0" letterSpacing={0.16}>
+        COURT 01
+      </Text>
+      <pointLight position={[0, 4.7, -131]} intensity={4.3} distance={26} color="#f7d39c" />
+    </group>
+  );
 }
 
 function TennisObject({position,kind}:{position:[number,number,number];kind:'ball'|'racket'}){
@@ -111,18 +315,19 @@ export function Scene({progress}:{progress:number}){
   const {camera}=useThree();
   const path=useMemo(()=>new THREE.CatmullRomCurve3([
     new THREE.Vector3(0,2.35,11),
-    new THREE.Vector3(0,2.4,-14),
-    new THREE.Vector3(-.45,2.5,-42),
-    new THREE.Vector3(.5,2.55,-72),
-    new THREE.Vector3(0,2.75,-100),
-    new THREE.Vector3(0,3.3,-119),
-    new THREE.Vector3(0,4.4,-137),
+    new THREE.Vector3(0,2.4,-12),
+    new THREE.Vector3(-.2,2.45,-31),
+    new THREE.Vector3(0,2.55,-52),
+    new THREE.Vector3(0,2.65,-68),
+    new THREE.Vector3(0,2.85,-87),
+    new THREE.Vector3(0,3.1,-105),
+    new THREE.Vector3(0,3.7,-123),
     new THREE.Vector3(0,5.2,-153),
   ],false,'catmullrom',.55),[]);
   const targetPath=useMemo(()=>new THREE.CatmullRomCurve3([
-    new THREE.Vector3(0,2.35,-5),new THREE.Vector3(0,2.4,-28),new THREE.Vector3(0,2.5,-55),
-    new THREE.Vector3(0,2.65,-84),new THREE.Vector3(0,3.2,-106),new THREE.Vector3(0,4,-126),
-    new THREE.Vector3(0,4.8,-145),new THREE.Vector3(0,4.8,-166)
+    new THREE.Vector3(0,2.35,-5),new THREE.Vector3(0,2.4,-24),new THREE.Vector3(0,2.5,-43),
+    new THREE.Vector3(0,2.6,-63),new THREE.Vector3(0,2.7,-81),new THREE.Vector3(0,3,-101),
+    new THREE.Vector3(0,4,-128),new THREE.Vector3(0,4.8,-166)
   ],false,'catmullrom',.5),[]);
   const pos=useRef(new THREE.Vector3());
   const look=useRef(new THREE.Vector3());
@@ -140,18 +345,19 @@ export function Scene({progress}:{progress:number}){
     camera.lookAt(look.current);
   });
 
-  const bays=Array.from({length:13},(_,i)=>-i*8-5);
+  const bays=Array.from({length:7},(_,i)=>-i*8-5);
   return <>
     <color attach="background" args={['#0e0f0d']}/>
     <fog attach="fog" args={['#0e0f0d',22,170]}/>
-    <ambientLight intensity={.72}/>
-    <directionalLight position={[-12,18,18]} intensity={2.4} castShadow shadow-mapSize={[2048,2048]} shadow-bias={-0.0002}/>
-    <pointLight position={[0,4,-25]} intensity={3.2} distance={18} color="#e9c987"/>
-    <pointLight position={[0,4,-80]} intensity={2.2} distance={20} color="#d9c69d"/>
-    <mesh position={[0,-.16,-55]} receiveShadow><boxGeometry args={[10.2,.32,125]}/><Concrete color="#4f5049" roughness={.62} repeat={5}/></mesh>
-    <mesh position={[-5.15,3,-55]} receiveShadow><boxGeometry args={[.28,6.1,125]}/><Concrete color="#6e6c64" roughness={.82} repeat={3}/></mesh>
-    <mesh position={[5.15,3,-55]} receiveShadow><boxGeometry args={[.28,6.1,125]}/><Concrete color="#6e6c64" roughness={.82} repeat={3}/></mesh>
-    <mesh position={[0,6.05,-55]}><boxGeometry args={[10.4,.22,125]}/><Concrete color="#34352f" roughness={.85} repeat={4}/></mesh>
+    <ambientLight intensity={0.74} color="#d8d2c4"/>
+    <directionalLight position={[-12,18,18]} intensity={2.6} color="#f3dfbc" castShadow shadow-mapSize={[2048,2048]} shadow-bias={-0.0002}/>
+    <directionalLight position={[0,18,-145]} intensity={2.8} color="#ffc98b"/>
+    <pointLight position={[0,4,-22]} intensity={2.7} distance={18} color="#f1ce91"/>
+    <pointLight position={[0,4,-43]} intensity={2.4} distance={18} color="#d9c69d"/>
+    <mesh position={[0,-.16,-25]} receiveShadow><boxGeometry args={[10.2,.32,65]}/><Concrete color="#4f5049" roughness={.56} repeat={5}/></mesh>
+    <mesh position={[-5.15,3,-25]} receiveShadow><boxGeometry args={[.28,6.1,65]}/><Concrete color="#6e6c64" roughness={.78} repeat={3}/></mesh>
+    <mesh position={[5.15,3,-25]} receiveShadow><boxGeometry args={[.28,6.1,65]}/><Concrete color="#6e6c64" roughness={.78} repeat={3}/></mesh>
+    <mesh position={[0,6.05,-25]}><boxGeometry args={[10.4,.22,65]}/><Concrete color="#34352f" roughness={.84} repeat={4}/></mesh>
     {bays.map((z,i)=><group key={z}>
       <mesh position={[-4.65,3,z]} castShadow><boxGeometry args={[.52,6.1,.52]}/><Concrete color="#7b786f" roughness={.76} repeat={2}/></mesh>
       <mesh position={[4.65,3,z]} castShadow><boxGeometry args={[.52,6.1,.52]}/><Concrete color="#7b786f" roughness={.76} repeat={2}/></mesh>
@@ -160,21 +366,12 @@ export function Scene({progress}:{progress:number}){
     </group>)}
     <Planter position={[-3.9,.05,-7]} scale={1.05}/><Planter position={[3.9,.05,-15]} scale={.9}/>
     <Planter position={[-3.9,.05,-31]} scale={.85}/><Planter position={[3.9,.05,-46]} scale={1.05}/>
-    <Planter position={[-3.9,.05,-61]} scale={.9}/><Planter position={[3.9,.05,-77]} scale={1.0}/>
     <WallArt side={1} z={-12} title="DISCIPLINE" sub="Creativity / Progress / Repeat"/>
     <WallArt side={-1} z={-38} title="GOOD IDEAS" sub="Play longer. Think wider."/>
-    <WallArt side={1} z={-66} title="BUILD" sub="Data / Design / Business"/>
-    <WallArt side={-1} z={-91} title="WHAT'S NEXT" sub="Curiosity becomes opportunity."/>
     <TennisObject position={[4.15,1.75,-24]} kind="racket"/>
-    <TennisObject position={[-4.15,1.85,-57]} kind="racket"/>
-    <TennisObject position={[3.85,1.3,-84]} kind="ball"/>
-    <ProjectScreen position={[-3.25,2.15,-88]} index={0}/>
-    <ProjectScreen position={[0,2.25,-92]} index={1}/>
-    <ProjectScreen position={[3.25,2.15,-88]} index={2}/>
-    <mesh position={[0,3.1,-112]}><boxGeometry args={[9.9,6.2,.42]}/><Concrete color="#737067" roughness={.74} repeat={2}/></mesh>
-    <mesh position={[0,3.15,-111.72]}><boxGeometry args={[6.5,4.5,.08]}/><meshStandardMaterial color="#10120f" roughness={.5}/></mesh>
-    <Text position={[-1.45,5.15,-111.45]} fontSize={.28} color="#dfd8c8" letterSpacing={.12}>RUGVED</Text>
-    <Text position={[-2.25,1.15,-111.4]} fontSize={.11} color="#b9b4a8" letterSpacing={.04}>THE JOURNEY LEADS SOMEWHERE BIGGER</Text>
+    <TennisObject position={[-3.9,1.15,-43]} kind="ball"/>
+    <LockerRoom/>
+    <ApproachTunnel/>
     <Stadium/>
     <Sparkles count={90} scale={[9,6,145]} position={[0,3,-70]} size={1.1} speed={.08} opacity={.16}/>
     <Environment preset="sunset" environmentIntensity={.45}/>
