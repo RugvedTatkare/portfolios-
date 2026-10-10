@@ -384,112 +384,263 @@ function TennisObject({position,kind}:{position:[number,number,number];kind:'bal
   return <group position={position} rotation={[.2,-.2,.2]} scale={.82}><mesh rotation={[Math.PI/2,0,0]}><torusGeometry args={[.72,.055,12,40]}/><meshStandardMaterial color="#c3bdad" metalness={.45} roughness={.3}/></mesh><mesh position={[0,-.95,0]}><cylinderGeometry args={[.055,.055,1.7,12]}/><meshStandardMaterial color="#252720" roughness={.55}/></mesh><mesh rotation={[Math.PI/2,0,0]}><circleGeometry args={[.64,32]}/><meshBasicMaterial color="#dfe2d1" transparent opacity={.09} wireframe/></mesh></group>
 }
 
+function TennisPlayer({ position, shirtColor, facing = 1 }: {
+  position: [number, number, number];
+  shirtColor: string;
+  facing?: number;
+}) {
+  return (
+    <group position={position} rotation={[0, facing === 1 ? 0 : Math.PI, 0]}>
+      <mesh position={[0, 0.9, 0]} castShadow>
+        <capsuleGeometry args={[0.19, 0.46, 5, 10]} />
+        <meshStandardMaterial color={shirtColor} roughness={0.7} />
+      </mesh>
+      <mesh position={[0, 1.29, 0]}>
+        <sphereGeometry args={[0.14, 14, 12]} />
+        <meshStandardMaterial color="#d3ab86" roughness={0.8} />
+      </mesh>
+      <mesh position={[-0.12, 0.49, 0]} rotation={[0, 0, 0.06]}>
+        <cylinderGeometry args={[0.07, 0.065, 0.43, 8]} />
+        <meshStandardMaterial color="#263b32" roughness={0.82} />
+      </mesh>
+      <mesh position={[0.12, 0.49, 0]}>
+        <cylinderGeometry args={[0.07, 0.065, 0.43, 8]} />
+        <meshStandardMaterial color="#263b32" roughness={0.82} />
+      </mesh>
+      <mesh position={[0.27, 0.99, 0.05]} rotation={[0.1, 0, -0.9]}>
+        <cylinderGeometry args={[0.045, 0.04, 0.48, 8]} />
+        <meshStandardMaterial color="#d3ab86" roughness={0.8} />
+      </mesh>
+      <group position={[0.45, 1.15, 0.09]} rotation={[0.15, 0.18, -0.32]}>
+        <mesh>
+          <torusGeometry args={[0.23, 0.027, 8, 24]} />
+          <meshStandardMaterial color="#f2efe1" metalness={0.42} roughness={0.38} />
+        </mesh>
+        <mesh position={[0, -0.34, 0]}>
+          <cylinderGeometry args={[0.025, 0.032, 0.38, 8]} />
+          <meshStandardMaterial color="#244034" roughness={0.65} />
+        </mesh>
+        <mesh>
+          <circleGeometry args={[0.205, 20]} />
+          <meshBasicMaterial color="#f7f5e9" wireframe transparent opacity={0.55} />
+        </mesh>
+      </group>
+    </group>
+  );
+}
+
 function Stadium() {
-  const seatData = useMemo(() => {
-    const matrices: THREE.Matrix4[] = [];
-    const seat = new THREE.Object3D();
+  const seating = useMemo(() => {
+    const seats: THREE.Matrix4[] = [];
+    const people: { body: THREE.Matrix4; head: THREE.Matrix4; shirt: string }[] = [];
+    const seatObject = new THREE.Object3D();
+    const person = new THREE.Object3D();
+    const palette = ['#f2eee2', '#c6d7d1', '#436e5d', '#d5b984', '#293f5e', '#d1d7db', '#8096a5', '#a8bc9b', '#bb7564'];
+    const addSeat = (x: number, y: number, z: number, rotationY: number, crowdIndex: number) => {
+      seatObject.position.set(x, y, z);
+      seatObject.rotation.set(0, rotationY, 0);
+      seatObject.updateMatrix();
+      seats.push(seatObject.matrix.clone());
+      if (crowdIndex % 2 === 0 || crowdIndex % 7 === 0) {
+        const shirt = palette[(crowdIndex * 7 + Math.floor(Math.abs(z)) * 3) % palette.length];
+        person.position.set(x, y + 0.39, z);
+        person.rotation.set(0, rotationY, 0);
+        person.updateMatrix();
+        const body = person.matrix.clone();
+        person.position.set(x, y + 0.77, z);
+        person.scale.setScalar(1);
+        person.updateMatrix();
+        people.push({ body, head: person.matrix.clone(), shirt });
+      }
+    };
     for (let row = 0; row < 10; row++) {
-      const radius = 19 + row * 1.9;
-      const y = 1 + row * 0.68;
-      for (let i = 0; i < 72; i++) {
-        const angle = (i / 72) * Math.PI * 2;
-        seat.position.set(Math.cos(angle) * radius, y, Math.sin(angle) * radius);
-        seat.rotation.y = -angle + Math.PI / 2;
-        seat.updateMatrix();
-        matrices.push(seat.matrix.clone());
+      const y = 0.85 + row * 0.61;
+      for (let seat = 0; seat < 38; seat++) {
+        const z = -27 + seat * (49 / 37);
+        for (const side of [-1, 1] as const) {
+          const x = side * (10.6 + row * 1.34);
+          addSeat(x, y, z, side === -1 ? Math.PI / 2 : -Math.PI / 2, row * 100 + seat * 2 + (side === 1 ? 1 : 0));
+        }
+      }
+      // A broad far-end stand wraps the baseline; the near end stays open for the walkout tunnel.
+      const farZ = -(19.1 + row * 1.3);
+      for (let seat = 0; seat < 34; seat++) {
+        const x = -20 + seat * (40 / 33);
+        addSeat(x, y, farZ, 0, row * 90 + seat + 13);
       }
     }
-    return matrices;
+    return { seats, people };
   }, []);
-  const seats = useRef<THREE.InstancedMesh>(null);
+  const seatsRef = useRef<THREE.InstancedMesh>(null);
+  const bodiesRef = useRef<THREE.InstancedMesh>(null);
+  const headsRef = useRef<THREE.InstancedMesh>(null);
   useEffect(() => {
-    if (!seats.current) return;
-    seatData.forEach((matrix, index) => seats.current!.setMatrixAt(index, matrix));
-    seats.current.instanceMatrix.needsUpdate = true;
-  }, [seatData]);
+    if (seatsRef.current) {
+      seating.seats.forEach((matrix, index) => seatsRef.current!.setMatrixAt(index, matrix));
+      seatsRef.current.instanceMatrix.needsUpdate = true;
+    }
+    if (bodiesRef.current && headsRef.current) {
+      seating.people.forEach((person, index) => {
+        bodiesRef.current!.setMatrixAt(index, person.body);
+        headsRef.current!.setMatrixAt(index, person.head);
+        const shirtColor = new THREE.Color(person.shirt);
+        bodiesRef.current!.setColorAt(index, shirtColor);
+        headsRef.current!.setColorAt(index, new THREE.Color('#caa17c'));
+      });
+      bodiesRef.current.instanceMatrix.needsUpdate = true;
+      headsRef.current.instanceMatrix.needsUpdate = true;
+      if (bodiesRef.current.instanceColor) bodiesRef.current.instanceColor.needsUpdate = true;
+      if (headsRef.current.instanceColor) headsRef.current.instanceColor.needsUpdate = true;
+    }
+  }, [seating]);
+
+  const rows = Array.from({ length: 10 }, (_, i) => i);
+  const stripes = Array.from({ length: 16 }, (_, i) => i);
+  const roofBeams = Array.from({ length: 8 }, (_, i) => -25 + i * 7.2);
 
   return (
-    <group position={[0, 0, -143]}>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-        <circleGeometry args={[39, 96]} />
-        <meshStandardMaterial color="#11130f" roughness={0.92} />
+    <group position={[0, 0, -162]}>
+      {/* Natural turf and mowing stripes */}
+      <mesh position={[0, -0.08, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+        <planeGeometry args={[78, 88]} />
+        <meshStandardMaterial color="#47734b" roughness={0.96} />
       </mesh>
-      <instancedMesh ref={seats} args={[undefined, undefined, seatData.length]} castShadow>
-        <boxGeometry args={[1.15, 0.48, 1.45]} />
-        <meshStandardMaterial color="#3c4038" roughness={0.74} />
+      <mesh position={[0, 0.08, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+        <planeGeometry args={[19.6, 38.2]} />
+        <meshStandardMaterial color="#4c8745" roughness={0.9} />
+      </mesh>
+      {stripes.map((i) => (
+        <mesh key={i} position={[0, 0.092, -17.2 + i * 2.28]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+          <planeGeometry args={[19.45, 2.28]} />
+          <meshStandardMaterial color={i % 2 === 0 ? '#6da94f' : '#4f8845'} roughness={0.96} />
+        </mesh>
+      ))}
+      {/* Precise white grass-court lines */}
+      {[-17.7, 17.7, -4.55, 4.55].map((z) => (
+        <mesh key={z} position={[0, 0.115, z]} rotation={[-Math.PI / 2, 0, 0]}>
+          <planeGeometry args={[18.9, 0.075]} />
+          <meshBasicMaterial color="#fffdf0" />
+        </mesh>
+      ))}
+      {[-8.55, 8.55, -4.12, 4.12].map((x) => (
+        <mesh key={x} position={[x, 0.115, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+          <planeGeometry args={[0.075, 35.4]} />
+          <meshBasicMaterial color="#fffdf0" />
+        </mesh>
+      ))}
+      <mesh position={[0, 0.115, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[0.07, 8.3]} />
+        <meshBasicMaterial color="#fffdf0" />
+      </mesh>
+      {/* Tennis net */}
+      <mesh position={[0, 0.72, 0]}>
+        <boxGeometry args={[18.0, 0.055, 0.08]} />
+        <meshStandardMaterial color="#e5e5d7" roughness={0.78} />
+      </mesh>
+      <mesh position={[0, 0.72, 0.015]}>
+        <boxGeometry args={[17.7, 0.88, 0.03]} />
+        <meshBasicMaterial color="#ecf0e3" wireframe transparent opacity={0.4} />
+      </mesh>
+      {[-9.05, 9.05].map((x) => (
+        <mesh key={x} position={[x, 0.58, 0]}>
+          <cylinderGeometry args={[0.045, 0.045, 1.05, 10]} />
+          <meshStandardMaterial color="#f0ebdb" metalness={0.32} roughness={0.3} />
+        </mesh>
+      ))}
+      <TennisPlayer position={[-3.8, 0.12, -8.5]} shirtColor="#f4f2e6" facing={1} />
+      <TennisPlayer position={[4.6, 0.12, 7.2]} shirtColor="#e4e9df" facing={-1} />
+
+      {/* Tiered green stands and packed crowd */}
+      {rows.map((row) => {
+        const y = 0.65 + row * 0.61;
+        const offset = 10.25 + row * 1.34;
+        const endOffset = 19.1 + row * 1.3;
+        return (
+          <group key={row}>
+            {[-1, 1].map((side) => (
+              <mesh key={side} position={[side * (offset + 0.66), y, -1.6]} receiveShadow>
+                <boxGeometry args={[2.8, 0.2, 54]} />
+                <meshStandardMaterial color={row % 2 ? '#315c48' : '#3d6d55'} roughness={0.86} />
+              </mesh>
+            ))}
+            <mesh position={[0, y, -endOffset]} receiveShadow>
+              <boxGeometry args={[42, 0.2, 2.5]} />
+              <meshStandardMaterial color={row % 2 ? '#315c48' : '#3d6d55'} roughness={0.86} />
+            </mesh>
+          </group>
+        );
+      })}
+      <instancedMesh ref={seatsRef} args={[undefined, undefined, seating.seats.length]} castShadow>
+        <boxGeometry args={[0.95, 0.42, 0.82]} />
+        <meshStandardMaterial color="#235a45" roughness={0.78} />
+      </instancedMesh>
+      <instancedMesh ref={bodiesRef} args={[undefined, undefined, seating.people.length]} castShadow>
+        <capsuleGeometry args={[0.11, 0.23, 3, 5]} />
+        <meshStandardMaterial roughness={0.78} />
+      </instancedMesh>
+      <instancedMesh ref={headsRef} args={[undefined, undefined, seating.people.length]}>
+        <sphereGeometry args={[0.09, 8, 8]} />
+        <meshStandardMaterial roughness={0.8} />
       </instancedMesh>
 
-      <mesh position={[0, 0.2, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-        <planeGeometry args={[18.2, 36.5]} />
-        <meshStandardMaterial color="#426b53" roughness={0.7} />
+      {/* Steel truss canopy around the stands with an open-sky view over the court */}
+      {[-1, 1].map((side) => (
+        <group key={side}>
+          <mesh position={[side * 25, 10.0, -1.5]} rotation={[0, 0, side * -0.035]}>
+            <boxGeometry args={[15.8, 0.28, 62]} />
+            <meshStandardMaterial color="#bbc8cc" metalness={0.42} roughness={0.38} />
+          </mesh>
+          {roofBeams.map((z) => (
+            <group key={z} position={[side * 24.5, 10.32, z]}>
+              <mesh rotation={[0, 0, side * -0.18]}>
+                <boxGeometry args={[16.2, 0.12, 0.12]} />
+                <meshStandardMaterial color="#e1e8e7" metalness={0.55} roughness={0.32} />
+              </mesh>
+              <mesh position={[side * 3.5, 0.82, 0]} rotation={[0, 0, side * 0.24]}>
+                <boxGeometry args={[8.2, 0.095, 0.095]} />
+                <meshStandardMaterial color="#c8d4d5" metalness={0.52} roughness={0.33} />
+              </mesh>
+              <mesh position={[-side * 3.5, 0.82, 0]} rotation={[0, 0, -side * 0.24]}>
+                <boxGeometry args={[8.2, 0.095, 0.095]} />
+                <meshStandardMaterial color="#c8d4d5" metalness={0.52} roughness={0.33} />
+              </mesh>
+              <mesh position={[0, 0.42, 0]}>
+                <boxGeometry args={[0.08, 0.85, 0.1]} />
+                <meshStandardMaterial color="#d9e2e2" metalness={0.52} roughness={0.32} />
+              </mesh>
+            </group>
+          ))}
+        </group>
+      ))}
+      <mesh position={[0, 10.7, -29.5]}>
+        <boxGeometry args={[45, 0.28, 8.5]} />
+        <meshStandardMaterial color="#b7c3c5" metalness={0.42} roughness={0.42} />
       </mesh>
-      <mesh position={[0, 0.22, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[16.8, 35.1]} />
-        <meshStandardMaterial color="#537c60" roughness={0.65} />
-      </mesh>
-
-      {[-17.5, 17.5, -4.5, 4.5].map((z) => (
-        <mesh key={z} position={[0, 0.245, z]} rotation={[-Math.PI / 2, 0, 0]}>
-          <planeGeometry args={[16.8, 0.055]} />
-          <meshBasicMaterial color="#f6f0df" />
+      {[-21, -29, -37].map((z) => (
+        <mesh key={z} position={[0, 11.0, z]}>
+          <boxGeometry args={[45, 0.1, 0.1]} />
+          <meshStandardMaterial color="#e3e9e7" metalness={0.55} roughness={0.3} />
         </mesh>
       ))}
-      {[-8.35, 8.35, -4.1, 4.1].map((x) => (
-        <mesh key={x} position={[x, 0.245, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-          <planeGeometry args={[0.055, 35.1]} />
-          <meshBasicMaterial color="#f6f0df" />
+      <mesh position={[0, 10.95, -24]}>
+        <boxGeometry args={[0.12, 1.05, 11]} />
+        <meshStandardMaterial color="#e2e8e6" metalness={0.52} roughness={0.33} />
+      </mesh>
+      {/* Boundary hoardings and a green courtside surround */}
+      {[-1, 1].map((side) => (
+        <mesh key={side} position={[side * 20.3, 0.95, -1]} receiveShadow>
+          <boxGeometry args={[0.35, 1.8, 54]} />
+          <meshStandardMaterial color="#164e3d" roughness={0.82} />
         </mesh>
       ))}
-      <mesh position={[0, 0.245, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[0.055, 9]} />
-        <meshBasicMaterial color="#f6f0df" />
+      <mesh position={[0, 0.95, -29.5]} receiveShadow>
+        <boxGeometry args={[42, 1.8, 0.35]} />
+        <meshStandardMaterial color="#174d3b" roughness={0.82} />
       </mesh>
-
-      <mesh position={[-8.35, 0.62, 0]}>
-        <cylinderGeometry args={[0.055, 0.055, 0.78, 10]} />
-        <meshStandardMaterial color="#d5c7a7" metalness={0.6} roughness={0.28} />
-      </mesh>
-      <mesh position={[8.35, 0.62, 0]}>
-        <cylinderGeometry args={[0.055, 0.055, 0.78, 10]} />
-        <meshStandardMaterial color="#d5c7a7" metalness={0.6} roughness={0.28} />
-      </mesh>
-      <mesh position={[0, 0.76, 0]}>
-        <planeGeometry args={[16.7, 0.98]} />
-        <meshBasicMaterial color="#e4e8dc" transparent opacity={0.2} side={THREE.DoubleSide} wireframe />
-      </mesh>
-      <mesh position={[0, 1.13, 0]}>
-        <boxGeometry args={[16.7, 0.035, 0.035]} />
-        <meshBasicMaterial color="#f6f0df" />
-      </mesh>
-
-      <mesh position={[0, 4.2, 0]}>
-        <torusGeometry args={[32, 0.13, 12, 128]} />
-        <meshStandardMaterial color="#77786c" metalness={0.45} roughness={0.3} />
-      </mesh>
-      {[-18, 18].map((x) => (
-        <mesh key={x} position={[x, 7, 0]} rotation={[0, 0, Math.PI / 2]}>
-          <cylinderGeometry args={[0.09, 0.09, 42, 12]} />
-          <meshStandardMaterial color="#575a52" metalness={0.4} roughness={0.4} />
-        </mesh>
-      ))}
-      <mesh position={[0, 8.2, -2]}>
-        <boxGeometry args={[20, 0.35, 0.12]} />
-        <meshStandardMaterial color="#242620" metalness={0.35} roughness={0.3} />
-      </mesh>
-      <Text position={[-5.2, 6.9, -1.85]} anchorX="left" fontSize={0.34} color="#ece7d8" letterSpacing={0.06}>RUGVED</Text>
-      <TennisObject position={[4.8, 0.65, -5]} kind="ball" />
-
-      <mesh position={[0, 13, -28]}>
-        <sphereGeometry args={[5.2, 48, 32]} />
-        <meshBasicMaterial color="#f2bb78" />
-      </mesh>
-      <mesh position={[0, 13, -28.2]}>
-        <sphereGeometry args={[6.5, 48, 32]} />
-        <meshBasicMaterial color="#f2bb78" transparent opacity={0.14} />
-      </mesh>
-      <pointLight position={[0, 14, -7]} intensity={7} distance={44} color="#ffcc8d" />
-      <pointLight position={[-13, 11, 1]} intensity={4.5} distance={32} color="#f4d2a0" />
-      <pointLight position={[13, 11, 1]} intensity={4.5} distance={32} color="#f4d2a0" />
+      <Text position={[-4.5, 8.35, -29.25]} anchorX="left" fontSize={0.36} color="#f1f2e7" letterSpacing={0.14}>
+        RUGVED / COURT 01
+      </Text>
+      <pointLight position={[0, 12, -22]} intensity={1.8} distance={54} color="#fff2d5" />
     </group>
   );
 }
