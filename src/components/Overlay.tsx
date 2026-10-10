@@ -16,11 +16,6 @@ function fade(progress: number, center: number, width = 0.13) {
   return Math.max(0, 1 - Math.abs(progress - center) / width);
 }
 
-function goToProgress(ratio: number) {
-  const maxScroll = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
-  window.scrollTo({ top: maxScroll * ratio, behavior: 'smooth' });
-}
-
 function activateOnKeyboard(action: () => void) {
   return (event: KeyboardEvent<HTMLElement>) => {
     if (event.key === 'Enter' || event.key === ' ') {
@@ -30,27 +25,29 @@ function activateOnKeyboard(action: () => void) {
   };
 }
 
-export function Overlay({ progress, selectedProject, onSelectProject, onCloseProject, matchPlaying, onToggleMatch }: {
+export function Overlay({ progress, selectedProject, onSelectProject, onNavigate, onCloseProject, matchPlaying, onToggleMatch }: {
   progress: number;
   selectedProject: Project | null;
   onSelectProject: (number: string) => void;
+  onNavigate: (ratio: number) => void;
   onCloseProject: () => void;
   matchPlaying: boolean;
   onToggleMatch: () => void;
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSkill, setActiveSkill] = useState<string | null>(null);
-  const hero = fade(progress, 0.03, 0.2);
-  const about = fade(progress, 0.2, 0.13);
-  const skills = fade(progress, 0.38, 0.13);
-  const projects = fade(progress, 0.54, 0.145);
-  const finale = fade(progress, 0.76, 0.12);
-  const stadium = fade(progress, 0.94, 0.12);
-  const active = progress < 0.13 ? 0 : progress < 0.3 ? 1 : progress < 0.46 ? 2 : progress < 0.68 ? 3 : progress < 0.86 ? 4 : 5;
-  const matchVisible = progress > 0.72;
+  // Exactly one editorial panel is visible at a time; panels switch at the midpoint between scroll stops.
+  const active = progress < 0.1 ? 0 : progress < 0.29 ? 1 : progress < 0.46 ? 2 : progress < 0.65 ? 3 : progress < 0.85 ? 4 : 5;
+  const hero = active === 0 ? 1 : 0;
+  const about = active === 1 ? 1 : 0;
+  const skills = active === 2 ? 1 : 0;
+  const projects = active === 3 ? 1 : 0;
+  const finale = active === 4 ? 1 : 0;
+  const stadium = active === 5 ? 1 : 0;
+  const matchVisible = active === 5;
   const goto = (ratio: number) => {
     setMobileMenuOpen(false);
-    goToProgress(ratio);
+    onNavigate(ratio);
   };
 
   useEffect(() => {
@@ -95,7 +92,7 @@ export function Overlay({ progress, selectedProject, onSelectProject, onClosePro
       </button>)}
     </aside>
 
-    <div className="copy copy--hero" style={{ opacity: hero, transform: `translate3d(0,calc(-43% + ${(1 - hero) * 18}px),0)` }}>
+    <div className="copy copy--hero" style={{ opacity: hero, visibility: active === 0 ? 'visible' : 'hidden', transform: 'translate3d(0,-43%,0)' }}>
       <p className="eyebrow interactive-text" onClick={() => goto(0)}>A portfolio, in motion.</p>
       <h1 className="interactive-text" role="button" tabIndex={0} onClick={() => goto(0)} onKeyDown={activateOnKeyboard(() => goto(0))}>A Different<br/>Game<span>.</span></h1>
       <p className="hero-line interactive-text" onClick={() => goto(0.38)}>Data · Design · Tennis · Beyond</p>
@@ -104,7 +101,7 @@ export function Overlay({ progress, selectedProject, onSelectProject, onClosePro
       <button onClick={() => goto(0.2)}>Walk into my world <span>→</span></button>
     </div>
 
-    <section className="copy copy--about" style={{ opacity: about }}>
+    <section className="copy copy--about" style={{ opacity: about, visibility: active === 1 ? 'visible' : 'hidden' }}>
       <p className="eyebrow interactive-text" onClick={() => goto(0.2)}>02 / About Me</p>
       <h2 className="interactive-text" role="button" tabIndex={0} onClick={() => goto(0.2)} onKeyDown={activateOnKeyboard(() => goto(0.2))}>Curious by nature.<br/>Builder by instinct.</h2>
       <p className="interactive-text" onClick={() => goto(0.38)}>{portfolio.about}</p>
@@ -116,7 +113,7 @@ export function Overlay({ progress, selectedProject, onSelectProject, onClosePro
       </div>
     </section>
 
-    <section className="copy copy--skills" style={{ opacity: skills }}>
+    <section className="copy copy--skills" style={{ opacity: skills, visibility: active === 2 ? 'visible' : 'hidden' }}>
       <p className="eyebrow interactive-text" onClick={() => goto(0.38)}>03 / Skills & Interests</p>
       <h2 className="interactive-text" role="button" tabIndex={0} onClick={() => goto(0.38)} onKeyDown={activateOnKeyboard(() => goto(0.38))}>Analysis with a<br/>creative point of view.</h2>
       <p className="interactive-text" onClick={() => goto(0.54)}>A mix of statistical thinking, machine learning, data storytelling and application development — with an ongoing interest in business and design.</p>
@@ -135,10 +132,10 @@ export function Overlay({ progress, selectedProject, onSelectProject, onClosePro
       <p className="skill-hint">{activeSkill ? 'Toolkit detail opened · Click again to collapse.' : 'Select any toolkit row to explore it.'}</p>
     </section>
 
-    <section className="copy copy--projects" style={{ opacity: projects }}>
+    <section className="copy copy--projects" style={{ opacity: projects, visibility: active === 3 ? 'visible' : 'hidden' }}>
       <p className="eyebrow interactive-text" onClick={() => goto(0.54)}>04 / Project Lockers</p>
       <h2 className="interactive-text" role="button" tabIndex={0} onClick={() => goto(0.54)} onKeyDown={activateOnKeyboard(() => goto(0.54))}>Every build gets<br/>its own locker.</h2>
-      <p className="interactive-text" onClick={() => goto(0.54)}>Walk up to a kit locker and click it to open the full project breakdown.</p>
+      <p className="interactive-text" onClick={() => goto(0.54)}>Click any 3D project board or a project row to open its complete breakdown.</p>
       <div className="project-list">
         {portfolio.projects.map((project) => <article className="project interactive-project" key={project.number} role="button" tabIndex={0} onClick={() => onSelectProject(project.number)} onKeyDown={activateOnKeyboard(() => onSelectProject(project.number))} aria-label={`Open details for ${project.title}`}>
           <div className="project-head"><b>{project.number}</b><span>{project.title}</span><span className="project-open-mark">↗</span></div>
@@ -149,7 +146,7 @@ export function Overlay({ progress, selectedProject, onSelectProject, onClosePro
       </div>
     </section>
 
-    <section className="copy copy--finale" style={{ opacity: finale }}>
+    <section className="copy copy--finale" style={{ opacity: finale, visibility: active === 4 ? 'visible' : 'hidden' }}>
       <p className="eyebrow interactive-text" onClick={() => goto(0.76)}>05 / The Walkout</p>
       <h2 className="interactive-text" role="button" tabIndex={0} onClick={() => goto(0.76)} onKeyDown={activateOnKeyboard(() => goto(0.76))}>Keep the discipline.<br/>Play the bigger game.</h2>
       <p className="interactive-text" onClick={() => goto(0.94)}>Outside the code, I enjoy design leadership, collaborating across teams and helping make creative ideas real.</p>
@@ -160,7 +157,7 @@ export function Overlay({ progress, selectedProject, onSelectProject, onClosePro
       <button className="walkout-cta" onClick={() => goto(0.94)}>Walk out onto the court <span>→</span></button>
     </section>
 
-    <section className="copy copy--stadium" style={{ opacity: stadium }}>
+    <section className="copy copy--stadium" style={{ opacity: stadium, visibility: active === 5 ? 'visible' : 'hidden' }}>
       <p className="eyebrow interactive-text" onClick={() => goto(0.94)}>06 / The Stadium</p>
       <h2 className="interactive-text" role="button" tabIndex={0} onClick={() => goto(0.94)} onKeyDown={activateOnKeyboard(() => goto(0.94))}>The next point<br/>starts here.</h2>
       <p className="interactive-text" onClick={() => goto(0.54)}>Open to interesting problems, creative collaborations and opportunities to build something meaningful.</p>
