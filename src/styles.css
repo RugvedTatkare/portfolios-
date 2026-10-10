@@ -1120,3 +1120,12 @@ button:active, .topbar nav a:active { transform: scale(.985); }
     padding: 0 9px; justify-content: space-between; white-space: nowrap; text-align: left;
   }
 }
+
+.locker-explore-panel.is-exploring > .play-tennis-button {
+  border-color: rgba(228,240,194,.68);
+  color: #eff7df;
+  background: rgba(207,228,174,.16);
+}
+.locker-explore-panel.is-exploring > .play-tennis-button:hover {
+  background: rgba(207,228,174,.27);
+}
