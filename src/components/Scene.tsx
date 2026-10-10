@@ -849,7 +849,7 @@ function Stadium({ matchPlaying, tennisGameActive, tennisHitSignal, tennisScore,
       ))}
       <TennisPlayer basePosition={[0, 0.12, -13]} shirtColor="#f4f2e6" side={0} matchClock={matchClock} matchPlaying={matchPlaying} />
       <TennisPlayer basePosition={[0, 0.12, 13]} shirtColor="#e4e9df" side={1} matchClock={matchClock} matchPlaying={matchPlaying} />
-      <mesh ref={matchBall} position={[-3.15, 0.24, -13.2]} castShadow>
+      <mesh ref={matchBall} visible={!tennisGameActive} position={[-3.15, 0.24, -13.2]} castShadow>
         <sphereGeometry args={[0.16, 20, 20]} />
         <meshStandardMaterial color="#d9e568" roughness={0.52} />
       </mesh>
