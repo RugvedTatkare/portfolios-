@@ -131,9 +131,9 @@ function ProjectLocker({ project, index, position }: {
 
 function LockerRoom() {
   const lockerPositions: [number, number, number][] = [
-    [-6.35, 2.82, -82.2],
-    [0, 3.12, -84.0],
-    [6.35, 2.82, -82.2],
+    [0, 2.82, -82.2],
+    [4.0, 3.12, -84.0],
+    [8.0, 2.82, -82.2],
   ];
   const doorZ = Array.from({ length: 9 }, (_, i) => -59 - i * 5.6);
   return (
@@ -416,8 +416,16 @@ export function Scene({progress}:{progress:number}){
   const mouse=useRef({x:0,y:0});
   useEffect(()=>{const f=(e:PointerEvent)=>{mouse.current.x=(e.clientX/innerWidth-.5)*2;mouse.current.y=(e.clientY/innerHeight-.5)*2};addEventListener('pointermove',f,{passive:true});return()=>removeEventListener('pointermove',f)},[]);
   useFrame((_,dt)=>{
-    const p=clamp01(progress), t=p*.99;
-    path.getPointAt(t,pos.current); targetPath.getPointAt(t,look.current);
+    const p = clamp01(progress);
+    const t = p < 0.4 ? p * 0.75 : p < 0.68 ? 0.3 + (p - 0.4) * 0.75 : 0.51 + (p - 0.68) * 1.5;
+    path.getPointAt(t, pos.current); targetPath.getPointAt(t, look.current);
+    const gallery = smooth((p - 0.37) / 0.12) * (1 - smooth((p - 0.63) / 0.12));
+    const perspective = camera as THREE.PerspectiveCamera;
+    const targetFov = 48 + gallery * 16;
+    if (Math.abs(perspective.fov - targetFov) > 0.08) {
+      perspective.fov = targetFov;
+      perspective.updateProjectionMatrix();
+    }
     const stadium=smooth((p-.72)/.28);
     pos.current.x+=mouse.current.x*(.16+stadium*.42);
     pos.current.y+=-mouse.current.y*.08+stadium*.25;
