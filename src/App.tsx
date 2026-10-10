@@ -8,6 +8,7 @@ import { portfolio } from './data/portfolio';
 export default function App() {
   const [progress, setProgress] = useState(0);
   const [selectedProjectNumber, setSelectedProjectNumber] = useState<string | null>(null);
+  const [matchPlaying, setMatchPlaying] = useState(true);
   const lenisRef = useRef<Lenis | null>(null);
   const selectedProject = portfolio.projects.find((project) => project.number === selectedProjectNumber) ?? null;
 
@@ -40,13 +41,16 @@ export default function App() {
           camera={{ position: [0, 2.3, 11], fov: 48, near: 0.1, far: 260 }}
           gl={{ antialias: true, powerPreference: 'high-performance' }}
         >
-          <Scene progress={progress} onSelectProject={setSelectedProjectNumber} />
+          <Scene progress={progress} onSelectProject={setSelectedProjectNumber} matchPlaying={matchPlaying} />
         </Canvas>
       </div>
       <Overlay
         progress={progress}
         selectedProject={selectedProject}
+        onSelectProject={setSelectedProjectNumber}
         onCloseProject={() => setSelectedProjectNumber(null)}
+        matchPlaying={matchPlaying}
+        onToggleMatch={() => setMatchPlaying((playing) => !playing)}
       />
       <div className="scroll-track">
         <section className="scroll-space scroll-space--intro" />
