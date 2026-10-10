@@ -1,5 +1,5 @@
 import { portfolio } from '../data/portfolio';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, type MutableRefObject } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { Environment, Float, Sky, Sparkles, Text } from '@react-three/drei';
 import * as THREE from 'three';
@@ -382,14 +382,42 @@ function TennisObject({position,kind}:{position:[number,number,number];kind:'bal
   return <group position={position} rotation={[.2,-.2,.2]} scale={.82}><mesh rotation={[Math.PI/2,0,0]}><torusGeometry args={[.72,.055,12,40]}/><meshStandardMaterial color="#c3bdad" metalness={.45} roughness={.3}/></mesh><mesh position={[0,-.95,0]}><cylinderGeometry args={[.055,.055,1.7,12]}/><meshStandardMaterial color="#252720" roughness={.55}/></mesh><mesh rotation={[Math.PI/2,0,0]}><circleGeometry args={[.64,32]}/><meshBasicMaterial color="#dfe2d1" transparent opacity={.09} wireframe/></mesh></group>
 }
 
-function TennisPlayer({ position, shirtColor, facing = 1 }: {
-  position: [number, number, number];
+function TennisPlayer({ basePosition, shirtColor, side, matchClock, matchPlaying }: {
+  basePosition: [number, number, number];
   shirtColor: string;
-  facing?: number;
+  side: 0 | 1;
+  matchClock: MutableRefObject<number>;
+  matchPlaying: boolean;
 }) {
+  const root = useRef<THREE.Group>(null);
+  const body = useRef<THREE.Mesh>(null);
+  const racketArm = useRef<THREE.Group>(null);
+  const leftLeg = useRef<THREE.Group>(null);
+  const rightLeg = useRef<THREE.Group>(null);
+
+  useFrame((_, delta) => {
+    if (!root.current || !body.current || !racketArm.current || !leftLeg.current || !rightLeg.current) return;
+    const time = matchClock.current;
+    const cycle = time % 2.5;
+    const targetX = side === 0
+      ? (cycle > 1.25 ? -3.0 : -0.25)
+      : (cycle < 1.25 ? 3.0 : 0.25);
+    const footwork = Math.sin(time * 3.0 + side * 1.5) * (matchPlaying ? 0.38 : 0.04);
+    root.current.position.x = THREE.MathUtils.damp(root.current.position.x, basePosition[0] + targetX + footwork, 4.2, delta);
+    root.current.position.z = basePosition[2] + Math.sin(time * 1.8 + side) * (matchPlaying ? 0.42 : 0);
+    const distanceToHit = side === 0 ? Math.min(cycle, 2.5 - cycle) : Math.abs(cycle - 1.25);
+    const swing = matchPlaying ? Math.exp(-Math.pow((distanceToHit - 0.07) / 0.12, 2)) : 0;
+    root.current.rotation.y = side === 0 ? 0 : Math.PI;
+    root.current.rotation.z = Math.sin(time * 2.7 + side) * (matchPlaying ? 0.025 : 0) + swing * 0.035;
+    body.current.position.y = 0.88 + Math.abs(Math.sin(time * 3.2 + side)) * (matchPlaying ? 0.055 : 0);
+    racketArm.current.rotation.z = -0.15 - swing * 1.55 + Math.sin(time * 2.1 + side) * (matchPlaying ? 0.1 : 0);
+    leftLeg.current.rotation.x = Math.sin(time * 4.2 + side) * (matchPlaying ? 0.28 : 0);
+    rightLeg.current.rotation.x = -Math.sin(time * 4.2 + side) * (matchPlaying ? 0.28 : 0);
+  });
+
   return (
-    <group position={position} rotation={[0, facing === 1 ? 0 : Math.PI, 0]}>
-      <mesh position={[0, 0.9, 0]} castShadow>
+    <group ref={root} position={basePosition} rotation={[0, side === 0 ? 0 : Math.PI, 0]}>
+      <mesh ref={body} position={[0, 0.88, 0]} castShadow>
         <capsuleGeometry args={[0.19, 0.46, 5, 10]} />
         <meshStandardMaterial color={shirtColor} roughness={0.7} />
       </mesh>
@@ -397,37 +425,59 @@ function TennisPlayer({ position, shirtColor, facing = 1 }: {
         <sphereGeometry args={[0.14, 14, 12]} />
         <meshStandardMaterial color="#d3ab86" roughness={0.8} />
       </mesh>
-      <mesh position={[-0.12, 0.49, 0]} rotation={[0, 0, 0.06]}>
-        <cylinderGeometry args={[0.07, 0.065, 0.43, 8]} />
-        <meshStandardMaterial color="#263b32" roughness={0.82} />
-      </mesh>
-      <mesh position={[0.12, 0.49, 0]}>
-        <cylinderGeometry args={[0.07, 0.065, 0.43, 8]} />
-        <meshStandardMaterial color="#263b32" roughness={0.82} />
-      </mesh>
-      <mesh position={[0.27, 0.99, 0.05]} rotation={[0.1, 0, -0.9]}>
-        <cylinderGeometry args={[0.045, 0.04, 0.48, 8]} />
-        <meshStandardMaterial color="#d3ab86" roughness={0.8} />
-      </mesh>
-      <group position={[0.45, 1.15, 0.09]} rotation={[0.15, 0.18, -0.32]}>
-        <mesh>
-          <torusGeometry args={[0.23, 0.027, 8, 24]} />
-          <meshStandardMaterial color="#f2efe1" metalness={0.42} roughness={0.38} />
+      <group ref={leftLeg} position={[-0.12, 0.49, 0]}>
+        <mesh rotation={[0, 0, 0.06]}>
+          <capsuleGeometry args={[0.065, 0.34, 4, 8]} />
+          <meshStandardMaterial color="#283e34" roughness={0.8} />
         </mesh>
-        <mesh position={[0, -0.34, 0]}>
-          <cylinderGeometry args={[0.025, 0.032, 0.38, 8]} />
-          <meshStandardMaterial color="#244034" roughness={0.65} />
-        </mesh>
-        <mesh>
-          <circleGeometry args={[0.205, 20]} />
-          <meshBasicMaterial color="#f7f5e9" wireframe transparent opacity={0.55} />
+        <mesh position={[0, -0.19, 0.07]}>
+          <boxGeometry args={[0.15, 0.07, 0.25]} />
+          <meshStandardMaterial color="#eff0e6" roughness={0.65} />
         </mesh>
       </group>
+      <group ref={rightLeg} position={[0.12, 0.49, 0]}>
+        <mesh>
+          <capsuleGeometry args={[0.065, 0.34, 4, 8]} />
+          <meshStandardMaterial color="#283e34" roughness={0.8} />
+        </mesh>
+        <mesh position={[0, -0.19, 0.07]}>
+          <boxGeometry args={[0.15, 0.07, 0.25]} />
+          <meshStandardMaterial color="#eff0e6" roughness={0.65} />
+        </mesh>
+      </group>
+      <mesh position={[-0.27, 0.98, 0]}>
+        <capsuleGeometry args={[0.052, 0.32, 4, 8]} />
+        <meshStandardMaterial color="#d3ab86" roughness={0.8} />
+      </mesh>
+      <group ref={racketArm} position={[0.25, 1.05, 0.02]}>
+        <mesh position={[0.16, -0.15, 0.02]} rotation={[0.1, 0, -0.65]}>
+          <capsuleGeometry args={[0.05, 0.35, 4, 8]} />
+          <meshStandardMaterial color="#d3ab86" roughness={0.8} />
+        </mesh>
+        <group position={[0.32, -0.28, 0.05]} rotation={[0.15, 0.15, -0.35]}>
+          <mesh>
+            <torusGeometry args={[0.29, 0.035, 8, 28]} />
+            <meshStandardMaterial color="#e7e8d9" metalness={0.48} roughness={0.36} />
+          </mesh>
+          <mesh position={[0, -0.43, 0]}>
+            <cylinderGeometry args={[0.028, 0.034, 0.48, 8]} />
+            <meshStandardMaterial color="#254737" roughness={0.58} />
+          </mesh>
+          <mesh>
+            <circleGeometry args={[0.25, 24]} />
+            <meshBasicMaterial color="#f7f5e9" wireframe transparent opacity={0.58} />
+          </mesh>
+        </group>
+      </group>
+      <mesh position={[0, 1.18, 0.03]}>
+        <boxGeometry args={[0.28, 0.045, 0.29]} />
+        <meshStandardMaterial color={shirtColor} roughness={0.78} />
+      </mesh>
     </group>
   );
 }
 
-function Stadium() {
+function Stadium({ matchPlaying }: { matchPlaying: boolean }) {
   const seating = useMemo(() => {
     const seats: THREE.Matrix4[] = [];
     const people: { body: THREE.Matrix4; head: THREE.Matrix4; shirt: string }[] = [];
@@ -469,6 +519,25 @@ function Stadium() {
     }
     return { seats, people };
   }, []);
+  const matchClock = useRef(0);
+  const matchBall = useRef<THREE.Mesh>(null);
+  useFrame((_, delta) => {
+    if (matchPlaying) matchClock.current += Math.min(delta, 0.05);
+    if (!matchBall.current) return;
+    const cycle = matchClock.current % 2.5;
+    const direction = cycle < 1.25 ? 1 : -1;
+    const u = cycle < 1.25 ? cycle / 1.25 : (cycle - 1.25) / 1.25;
+    const startX = direction === 1 ? -3.15 : 3.15;
+    const endX = direction === 1 ? 3.05 : -3.05;
+    const startZ = direction === 1 ? -13.2 : 13.2;
+    const endZ = -startZ;
+    const x = THREE.MathUtils.lerp(startX, endX, u) + Math.sin(Math.PI * u) * (direction === 1 ? 0.7 : -0.7);
+    const y = 0.24 + Math.sin(Math.PI * u) * 3.15;
+    const z = THREE.MathUtils.lerp(startZ, endZ, u);
+    matchBall.current.position.set(x, y, z);
+    matchBall.current.rotation.x += delta * (matchPlaying ? 7 : 0);
+    matchBall.current.rotation.z += delta * (matchPlaying ? 5 : 0);
+  });
   const seatsRef = useRef<THREE.InstancedMesh>(null);
   const bodiesRef = useRef<THREE.InstancedMesh>(null);
   const headsRef = useRef<THREE.InstancedMesh>(null);
@@ -545,8 +614,12 @@ function Stadium() {
           <meshStandardMaterial color="#f0ebdb" metalness={0.32} roughness={0.3} />
         </mesh>
       ))}
-      <TennisPlayer position={[-3.8, 0.12, -8.5]} shirtColor="#f4f2e6" facing={1} />
-      <TennisPlayer position={[4.6, 0.12, 7.2]} shirtColor="#e4e9df" facing={-1} />
+      <TennisPlayer basePosition={[0, 0.12, -13]} shirtColor="#f4f2e6" side={0} matchClock={matchClock} matchPlaying={matchPlaying} />
+      <TennisPlayer basePosition={[0, 0.12, 13]} shirtColor="#e4e9df" side={1} matchClock={matchClock} matchPlaying={matchPlaying} />
+      <mesh ref={matchBall} position={[-3.15, 0.24, -13.2]} castShadow>
+        <sphereGeometry args={[0.16, 20, 20]} />
+        <meshStandardMaterial color="#d9e568" roughness={0.52} />
+      </mesh>
 
       {/* Tiered green stands and packed crowd */}
       {rows.map((row) => {
@@ -643,7 +716,7 @@ function Stadium() {
   );
 }
 
-export function Scene({ progress, onSelectProject }: { progress: number; onSelectProject: (number: string) => void }){
+export function Scene({ progress, onSelectProject, matchPlaying }: { progress: number; onSelectProject: (number: string) => void; matchPlaying: boolean }){
   const {camera}=useThree();
   const path=useMemo(()=>new THREE.CatmullRomCurve3([
     new THREE.Vector3(0,2.35,11),
@@ -714,7 +787,7 @@ export function Scene({ progress, onSelectProject }: { progress: number; onSelec
     <TennisObject position={[-3.9,1.15,-43]} kind="ball"/>
     <LockerRoom onSelectProject={onSelectProject}/>
     <ApproachTunnel/>
-    <Stadium/>
+    <Stadium matchPlaying={matchPlaying}/>
     <Sparkles count={34} scale={[9,6,125]} position={[0,4,-72]} size={0.9} speed={0.1} opacity={0.11}/>
     <Environment preset="dawn" environmentIntensity={0.58} background={false}/>
   </>;
