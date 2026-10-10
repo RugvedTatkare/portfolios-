@@ -49,7 +49,7 @@ export function Overlay({ progress }: { progress: number }) {
       </div>)}
     </aside>
 
-    <div className="copy copy--hero" style={{ opacity: hero, transform: `translate3d(0,${(1 - hero) * 18}px,0)` }}>
+    <div className="copy copy--hero" style={{ opacity: hero, transform: `translate3d(0,calc(-43% + ${(1 - hero) * 18}px),0)` }}>
       <p className="eyebrow">A portfolio, in motion.</p>
       <h1>A Different<br/>Game<span>.</span></h1>
       <p className="hero-line">Data · Design · Tennis · Beyond</p>
@@ -64,7 +64,7 @@ export function Overlay({ progress }: { progress: number }) {
       <p>{portfolio.about}</p>
       <div className="line-list">
         <span>{portfolio.education}</span>
-        <span>CGPA / {portfolio.academic}</span>
+        <span>{portfolio.academic}</span>
         <span>Latest semester GPA / 9.55 out of 10</span>
         <span>Based in {portfolio.location}</span>
       </div>
