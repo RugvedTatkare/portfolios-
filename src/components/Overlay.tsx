@@ -21,6 +21,10 @@ function activateOnKeyboard(action: () => void) {
   };
 }
 
+function sendMovementKey(key: string, type: 'keydown' | 'keyup') {
+  window.dispatchEvent(new KeyboardEvent(type, { key, bubbles: true, cancelable: true }));
+}
+
 export function Overlay({ progress, selectedProject, onSelectProject, onNavigate, onCloseProject, matchPlaying, onToggleMatch, exploreMode, onToggleExplore }: {
   progress: number;
   selectedProject: Project | null;
@@ -192,6 +196,15 @@ export function Overlay({ progress, selectedProject, onSelectProject, onNavigate
           </>
         )}
       </aside>
+    )}
+
+    {exploreMode && active === 3 && !selectedProject && (
+      <div className="explore-dpad" aria-label="Touch movement controls">
+        <button className="explore-dpad-up" aria-label="Move forward" onPointerDown={(event) => { event.preventDefault(); sendMovementKey('w', 'keydown'); }} onPointerUp={() => sendMovementKey('w', 'keyup')} onPointerLeave={() => sendMovementKey('w', 'keyup')} onPointerCancel={() => sendMovementKey('w', 'keyup')}>↑</button>
+        <button className="explore-dpad-left" aria-label="Move left" onPointerDown={(event) => { event.preventDefault(); sendMovementKey('a', 'keydown'); }} onPointerUp={() => sendMovementKey('a', 'keyup')} onPointerLeave={() => sendMovementKey('a', 'keyup')} onPointerCancel={() => sendMovementKey('a', 'keyup')}>←</button>
+        <button className="explore-dpad-down" aria-label="Move backward" onPointerDown={(event) => { event.preventDefault(); sendMovementKey('s', 'keydown'); }} onPointerUp={() => sendMovementKey('s', 'keyup')} onPointerLeave={() => sendMovementKey('s', 'keyup')} onPointerCancel={() => sendMovementKey('s', 'keyup')}>↓</button>
+        <button className="explore-dpad-right" aria-label="Move right" onPointerDown={(event) => { event.preventDefault(); sendMovementKey('d', 'keydown'); }} onPointerUp={() => sendMovementKey('d', 'keyup')} onPointerLeave={() => sendMovementKey('d', 'keyup')} onPointerCancel={() => sendMovementKey('d', 'keyup')}>→</button>
+      </div>
     )}
 
     {matchVisible && (
