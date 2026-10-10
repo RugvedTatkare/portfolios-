@@ -31,7 +31,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
     linear-gradient(90deg, rgba(10, 25, 23, .42) 0%, rgba(10, 25, 23, .24) 27%, rgba(10, 25, 23, .04) 60%, rgba(10, 25, 23, .02) 78%, rgba(10, 25, 23, .16) 100%),
     linear-gradient(0deg, rgba(8, 20, 18, .4) 0%, transparent 20%, transparent 82%, rgba(8, 20, 18, .1) 100%);
 }
-.scroll-track { position: relative; z-index: 1; }
+.scroll-track { position: relative; z-index: 1; pointer-events: none; }
 .scroll-space { height: 105vh; }
 .scroll-space--intro { height: 112vh; }
 .scroll-space--final { height: 145vh; }
