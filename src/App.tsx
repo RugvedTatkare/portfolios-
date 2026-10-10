@@ -92,6 +92,17 @@ export default function App() {
     const isInteractiveTarget = (target: EventTarget | null) =>
       target instanceof Element && Boolean(target.closest('button, a, input, textarea, select, [role="dialog"]'));
 
+    const scrollActiveCopy = (deltaY: number) => {
+      const activeCopy = Array.from(document.querySelectorAll<HTMLElement>('.copy'))
+        .find((element) => element.style.visibility === 'visible');
+      if (!activeCopy || activeCopy.scrollHeight <= activeCopy.clientHeight + 2) return false;
+      const canScrollDown = deltaY > 0 && activeCopy.scrollTop + activeCopy.clientHeight < activeCopy.scrollHeight - 2;
+      const canScrollUp = deltaY < 0 && activeCopy.scrollTop > 2;
+      if (!canScrollDown && !canScrollUp) return false;
+      activeCopy.scrollTop = Math.max(0, Math.min(activeCopy.scrollHeight - activeCopy.clientHeight, activeCopy.scrollTop + deltaY));
+      return true;
+    };
+
     const snapByDirection = (direction: -1 | 1) => {
       if (snapLockedRef.current || selectedProjectNumber) return;
       let closestIndex = 0;
@@ -114,6 +125,8 @@ export default function App() {
         return;
       }
       event.preventDefault();
+      // If a text panel contains extra content, let the reader finish it before changing phase.
+      if (scrollActiveCopy(event.deltaY)) return;
       if (wheelGestureRef.current || snapLockedRef.current) {
         if (wheelResetTimerRef.current !== null) window.clearTimeout(wheelResetTimerRef.current);
         wheelResetTimerRef.current = window.setTimeout(() => { wheelGestureRef.current = false; }, 180);
@@ -127,28 +140,42 @@ export default function App() {
     };
 
     let touchStartY: number | null = null;
+    let lastTouchY: number | null = null;
     let touchStartTarget: EventTarget | null = null;
+    let touchConsumedByCopy = false;
     const handleTouchStart = (event: TouchEvent) => {
       touchStartY = event.touches[0]?.clientY ?? null;
+      lastTouchY = touchStartY;
       touchStartTarget = event.target;
+      touchConsumedByCopy = false;
     };
     const handleTouchMove = (event: TouchEvent) => {
       if (selectedProjectNumber && isInsideProjectDialog(event.target)) return;
       if (touchStartY === null || isInteractiveTarget(touchStartTarget)) return;
+      const currentY = event.touches[0]?.clientY;
+      if (currentY !== undefined && lastTouchY !== null) {
+        const deltaY = lastTouchY - currentY;
+        if (Math.abs(deltaY) > 1 && scrollActiveCopy(deltaY)) touchConsumedByCopy = true;
+        lastTouchY = currentY;
+      }
       event.preventDefault();
     };
     const handleTouchEnd = (event: TouchEvent) => {
       if (selectedProjectNumber && isInsideProjectDialog(touchStartTarget)) {
         touchStartY = null;
+        lastTouchY = null;
         touchStartTarget = null;
+        touchConsumedByCopy = false;
         return;
       }
       const endY = event.changedTouches[0]?.clientY;
-      if (touchStartY !== null && endY !== undefined && Math.abs(endY - touchStartY) > 42 && !isInteractiveTarget(touchStartTarget)) {
+      if (!touchConsumedByCopy && touchStartY !== null && endY !== undefined && Math.abs(endY - touchStartY) > 42 && !isInteractiveTarget(touchStartTarget)) {
         snapByDirection(endY < touchStartY ? 1 : -1);
       }
       touchStartY = null;
+      lastTouchY = null;
       touchStartTarget = null;
+      touchConsumedByCopy = false;
     };
 
     const handleKeyDown = (event: KeyboardEvent) => {
