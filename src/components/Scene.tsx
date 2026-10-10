@@ -283,32 +283,114 @@ function TennisObject({position,kind}:{position:[number,number,number];kind:'bal
   return <group position={position} rotation={[.2,-.2,.2]} scale={.82}><mesh rotation={[Math.PI/2,0,0]}><torusGeometry args={[.72,.055,12,40]}/><meshStandardMaterial color="#c3bdad" metalness={.45} roughness={.3}/></mesh><mesh position={[0,-.95,0]}><cylinderGeometry args={[.055,.055,1.7,12]}/><meshStandardMaterial color="#252720" roughness={.55}/></mesh><mesh rotation={[Math.PI/2,0,0]}><circleGeometry args={[.64,32]}/><meshBasicMaterial color="#dfe2d1" transparent opacity={.09} wireframe/></mesh></group>
 }
 
-function Stadium(){
-  const seatData=useMemo(()=>{
-    const arr:THREE.Matrix4[]=[];
-    const dummy=new THREE.Object3D();
-    for(let row=0;row<10;row++){
-      const radius=19+row*1.9, y=1+row*.68;
-      for(let i=0;i<72;i++){const a=i/72*Math.PI*2;dummy.position.set(Math.cos(a)*radius,y,Math.sin(a)*radius);dummy.rotation.y=-a+Math.PI/2;dummy.updateMatrix();arr.push(dummy.matrix.clone());}
+function Stadium() {
+  const seatData = useMemo(() => {
+    const matrices: THREE.Matrix4[] = [];
+    const seat = new THREE.Object3D();
+    for (let row = 0; row < 10; row++) {
+      const radius = 19 + row * 1.9;
+      const y = 1 + row * 0.68;
+      for (let i = 0; i < 72; i++) {
+        const angle = (i / 72) * Math.PI * 2;
+        seat.position.set(Math.cos(angle) * radius, y, Math.sin(angle) * radius);
+        seat.rotation.y = -angle + Math.PI / 2;
+        seat.updateMatrix();
+        matrices.push(seat.matrix.clone());
+      }
     }
-    return arr;
-  },[]);
-  const ref=useRef<THREE.InstancedMesh>(null);
-  useEffect(()=>{if(ref.current) seatData.forEach((m,i)=>ref.current!.setMatrixAt(i,m)); if(ref.current) ref.current.instanceMatrix.needsUpdate=true;},[seatData]);
-  return <group position={[0,0,-143]}>
-    <mesh rotation={[-Math.PI/2,0,0]} receiveShadow><circleGeometry args={[39,96]}/><meshStandardMaterial color="#11130f" roughness={.92}/></mesh>
-    <instancedMesh ref={ref} args={[undefined,undefined,seatData.length]} castShadow><boxGeometry args={[1.15,.48,1.45]}/><meshStandardMaterial color="#30332d" roughness={.78}/></instancedMesh>
-    <mesh position={[0,.2,0]} rotation={[-Math.PI/2,0,0]} receiveShadow><planeGeometry args={[18.2,36.5]}/><meshStandardMaterial color="#426b53" roughness={.7}/></mesh>
-    <mesh position={[0,.22,0]} rotation={[-Math.PI/2,0,0]}><planeGeometry args={[16.8,35.1]}/><meshStandardMaterial color="#537c60" roughness={.65}/></mesh>
-    {[-17.5,-8.6,0,8.6,17.5].map((z,i)=><mesh key={i} position={[0,.25,z]} rotation={[-Math.PI/2,0,0]}><planeGeometry args={[16.8,.045]}/><meshBasicMaterial color="#f4efe0"/></mesh>)}
-    <mesh position={[0,.25,0]} rotation={[-Math.PI/2,0,0]}><planeGeometry args={[.045,35.1]}/><meshBasicMaterial color="#f4efe0"/></mesh>
-    <mesh position={[0,.78,0]}><boxGeometry args={[16.9,.06,.06]}/><meshBasicMaterial color="#f4efe0"/></mesh>
-    <mesh position={[0,4.2,0]}><torusGeometry args={[32,.13,12,128]}/><meshStandardMaterial color="#5e6258" metalness={.4} roughness={.3}/></mesh>
-    {[-18,18].map(x=><mesh key={x} position={[x,7,0]} rotation={[0,0,Math.PI/2]}><cylinderGeometry args={[.09,.09,42,12]}/><meshStandardMaterial color="#575a52" metalness={.4} roughness={.4}/></mesh>)}
-    <mesh position={[0,8.2,-2]}><boxGeometry args={[20,.35,.12]}/><meshStandardMaterial color="#242620" metalness={.35} roughness={.3}/></mesh>
-    <Text position={[-5.2,6.9,-1.85]} anchorX="left" fontSize={.34} color="#ece7d8" letterSpacing={.06}>RUGVED</Text>
-    <TennisObject position={[4.8,.65,-5]} kind="ball"/>
-  </group>
+    return matrices;
+  }, []);
+  const seats = useRef<THREE.InstancedMesh>(null);
+  useEffect(() => {
+    if (!seats.current) return;
+    seatData.forEach((matrix, index) => seats.current!.setMatrixAt(index, matrix));
+    seats.current.instanceMatrix.needsUpdate = true;
+  }, [seatData]);
+
+  return (
+    <group position={[0, 0, -143]}>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+        <circleGeometry args={[39, 96]} />
+        <meshStandardMaterial color="#11130f" roughness={0.92} />
+      </mesh>
+      <instancedMesh ref={seats} args={[undefined, undefined, seatData.length]} castShadow>
+        <boxGeometry args={[1.15, 0.48, 1.45]} />
+        <meshStandardMaterial color="#3c4038" roughness={0.74} />
+      </instancedMesh>
+
+      <mesh position={[0, 0.2, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+        <planeGeometry args={[18.2, 36.5]} />
+        <meshStandardMaterial color="#426b53" roughness={0.7} />
+      </mesh>
+      <mesh position={[0, 0.22, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[16.8, 35.1]} />
+        <meshStandardMaterial color="#537c60" roughness={0.65} />
+      </mesh>
+
+      {[-17.5, 17.5, -4.5, 4.5].map((z) => (
+        <mesh key={z} position={[0, 0.245, z]} rotation={[-Math.PI / 2, 0, 0]}>
+          <planeGeometry args={[16.8, 0.055]} />
+          <meshBasicMaterial color="#f6f0df" />
+        </mesh>
+      ))}
+      {[-8.35, 8.35, -4.1, 4.1].map((x) => (
+        <mesh key={x} position={[x, 0.245, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+          <planeGeometry args={[0.055, 35.1]} />
+          <meshBasicMaterial color="#f6f0df" />
+        </mesh>
+      ))}
+      <mesh position={[0, 0.245, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[0.055, 9]} />
+        <meshBasicMaterial color="#f6f0df" />
+      </mesh>
+
+      <mesh position={[-8.35, 0.62, 0]}>
+        <cylinderGeometry args={[0.055, 0.055, 0.78, 10]} />
+        <meshStandardMaterial color="#d5c7a7" metalness={0.6} roughness={0.28} />
+      </mesh>
+      <mesh position={[8.35, 0.62, 0]}>
+        <cylinderGeometry args={[0.055, 0.055, 0.78, 10]} />
+        <meshStandardMaterial color="#d5c7a7" metalness={0.6} roughness={0.28} />
+      </mesh>
+      <mesh position={[0, 0.76, 0]}>
+        <planeGeometry args={[16.7, 0.98]} />
+        <meshBasicMaterial color="#e4e8dc" transparent opacity={0.2} side={THREE.DoubleSide} wireframe />
+      </mesh>
+      <mesh position={[0, 1.13, 0]}>
+        <boxGeometry args={[16.7, 0.035, 0.035]} />
+        <meshBasicMaterial color="#f6f0df" />
+      </mesh>
+
+      <mesh position={[0, 4.2, 0]}>
+        <torusGeometry args={[32, 0.13, 12, 128]} />
+        <meshStandardMaterial color="#77786c" metalness={0.45} roughness={0.3} />
+      </mesh>
+      {[-18, 18].map((x) => (
+        <mesh key={x} position={[x, 7, 0]} rotation={[0, 0, Math.PI / 2]}>
+          <cylinderGeometry args={[0.09, 0.09, 42, 12]} />
+          <meshStandardMaterial color="#575a52" metalness={0.4} roughness={0.4} />
+        </mesh>
+      ))}
+      <mesh position={[0, 8.2, -2]}>
+        <boxGeometry args={[20, 0.35, 0.12]} />
+        <meshStandardMaterial color="#242620" metalness={0.35} roughness={0.3} />
+      </mesh>
+      <Text position={[-5.2, 6.9, -1.85]} anchorX="left" fontSize={0.34} color="#ece7d8" letterSpacing={0.06}>RUGVED</Text>
+      <TennisObject position={[4.8, 0.65, -5]} kind="ball" />
+
+      <mesh position={[0, 13, -28]}>
+        <sphereGeometry args={[5.2, 48, 32]} />
+        <meshBasicMaterial color="#f2bb78" />
+      </mesh>
+      <mesh position={[0, 13, -28.2]}>
+        <sphereGeometry args={[6.5, 48, 32]} />
+        <meshBasicMaterial color="#f2bb78" transparent opacity={0.14} />
+      </mesh>
+      <pointLight position={[0, 14, -7]} intensity={7} distance={44} color="#ffcc8d" />
+      <pointLight position={[-13, 11, 1]} intensity={4.5} distance={32} color="#f4d2a0" />
+      <pointLight position={[13, 11, 1]} intensity={4.5} distance={32} color="#f4d2a0" />
+    </group>
+  );
 }
 
 export function Scene({progress}:{progress:number}){
