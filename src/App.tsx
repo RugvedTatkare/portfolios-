@@ -124,13 +124,13 @@ export default function App() {
     };
 
     const handleWheel = (event: WheelEvent) => {
-      if (exploreMode) {
+      if (selectedProjectNumber) {
+        // Keep project details scrollable even when the scene is in free-look mode.
+        if (isInsideProjectDialog(event.target)) return;
         event.preventDefault();
         return;
       }
-      if (selectedProjectNumber) {
-        // The project dialog itself stays scrollable; the scene behind it stays still.
-        if (isInsideProjectDialog(event.target)) return;
+      if (exploreMode) {
         event.preventDefault();
         return;
       }
@@ -160,11 +160,11 @@ export default function App() {
       touchConsumedByCopy = false;
     };
     const handleTouchMove = (event: TouchEvent) => {
+      if (selectedProjectNumber && isInsideProjectDialog(event.target)) return;
       if (exploreMode) {
         event.preventDefault();
         return;
       }
-      if (selectedProjectNumber && isInsideProjectDialog(event.target)) return;
       if (touchStartY === null || isInteractiveTarget(touchStartTarget)) return;
       const currentY = event.touches[0]?.clientY;
       if (currentY !== undefined && lastTouchY !== null) {
@@ -175,14 +175,14 @@ export default function App() {
       event.preventDefault();
     };
     const handleTouchEnd = (event: TouchEvent) => {
-      if (exploreMode) {
+      if (selectedProjectNumber && isInsideProjectDialog(touchStartTarget)) {
         touchStartY = null;
         lastTouchY = null;
         touchStartTarget = null;
         touchConsumedByCopy = false;
         return;
       }
-      if (selectedProjectNumber && isInsideProjectDialog(touchStartTarget)) {
+      if (exploreMode) {
         touchStartY = null;
         lastTouchY = null;
         touchStartTarget = null;
@@ -200,6 +200,7 @@ export default function App() {
     };
 
     const handleKeyDown = (event: KeyboardEvent) => {
+      if (selectedProjectNumber) return;
       if (exploreMode) {
         if (event.key === 'Escape') {
           event.preventDefault();
