@@ -238,6 +238,16 @@ function ProjectLocker({ project, index, position, rotationY = 0, onSelect }: {
         onPointerOver={(event) => { event.stopPropagation(); document.body.style.cursor = 'pointer'; }}
         onPointerOut={() => { document.body.style.cursor = 'auto'; }}
       >
+        {/* Invisible, full-size hit target makes the complete project board easy to click. */}
+        <mesh
+          position={[0, 0, 0.29]}
+          onClick={(event) => { event.stopPropagation(); onSelect(); }}
+          onPointerOver={(event) => { event.stopPropagation(); document.body.style.cursor = 'pointer'; }}
+          onPointerOut={() => { document.body.style.cursor = 'grab'; }}
+        >
+          <boxGeometry args={[4.48, 3.72, 0.16]} />
+          <meshBasicMaterial transparent opacity={0.001} depthWrite={false} side={THREE.DoubleSide} />
+        </mesh>
         {/* Painted team-kit locker shell */}
         <mesh position={[0, 0, -0.15]} castShadow receiveShadow>
           <boxGeometry args={[4.45, 3.72, 0.32]} />
@@ -623,7 +633,14 @@ function TennisPlayer({ basePosition, shirtColor, side, matchClock, matchPlaying
   );
 }
 
-function Stadium({ matchPlaying }: { matchPlaying: boolean }) {
+function Stadium({ matchPlaying, tennisGameActive, tennisHitSignal, tennisScore, onTennisPoint }: {
+  matchPlaying: boolean;
+  tennisGameActive: boolean;
+  tennisHitSignal: number;
+  tennisScore: { rugved: number; opponent: number };
+  onTennisPoint: (winner: 'rugved' | 'opponent') => void;
+}) {
+  const { camera } = useThree();
   const seating = useMemo(() => {
     const seats: THREE.Matrix4[] = [];
     const people: { body: THREE.Matrix4; head: THREE.Matrix4; shirt: string }[] = [];
@@ -667,6 +684,14 @@ function Stadium({ matchPlaying }: { matchPlaying: boolean }) {
   }, []);
   const matchClock = useRef(0);
   const matchBall = useRef<THREE.Mesh>(null);
+  const practiceBall = useRef<THREE.Mesh>(null);
+  const practiceState = useRef({
+    active: false,
+    mode: 'incoming' as 'incoming' | 'outgoing',
+    elapsed: 0,
+    velocity: new THREE.Vector3(),
+  });
+  const previousHitSignal = useRef(tennisHitSignal);
   useFrame((_, delta) => {
     if (matchPlaying) matchClock.current += Math.min(delta, 0.05);
     if (!matchBall.current) return;
@@ -684,6 +709,68 @@ function Stadium({ matchPlaying }: { matchPlaying: boolean }) {
     matchBall.current.rotation.x += delta * (matchPlaying ? 7 : 0);
     matchBall.current.rotation.z += delta * (matchPlaying ? 5 : 0);
   });
+
+  useFrame((_, delta) => {
+    const ball = practiceBall.current;
+    const state = practiceState.current;
+    if (!tennisGameActive || !ball) {
+      state.active = false;
+      previousHitSignal.current = tennisHitSignal;
+      return;
+    }
+
+    const dt = Math.min(delta, 0.04);
+    if (!state.active) {
+      state.active = true;
+      state.mode = 'incoming';
+      state.elapsed = 0;
+      state.velocity.set(0, 0, 0);
+      ball.position.set(0, 2.2, -12.5);
+      previousHitSignal.current = tennisHitSignal;
+    }
+
+    if (state.mode === 'incoming') {
+      state.elapsed += dt;
+      const u = Math.min(1, state.elapsed / 3.4);
+      ball.position.set(
+        Math.sin(state.elapsed * 1.7) * 2.6,
+        1.1 + Math.sin(Math.PI * u) * 2.25,
+        THREE.MathUtils.lerp(-12.5, 14.3, u),
+      );
+      if (tennisHitSignal !== previousHitSignal.current) {
+        previousHitSignal.current = tennisHitSignal;
+        const playerZ = camera.position.z + 162;
+        const closeEnough = Math.abs(ball.position.x - camera.position.x) < 5.2
+          && Math.abs(ball.position.z - playerZ) < 8.5
+          && ball.position.y < 4.4;
+        if (closeEnough) {
+          state.mode = 'outgoing';
+          state.velocity.set(
+            THREE.MathUtils.clamp((ball.position.x - camera.position.x) * 0.36, -3.2, 3.2),
+            4.4,
+            -16,
+          );
+        }
+      }
+      if (state.elapsed >= 3.4) {
+        onTennisPoint('opponent');
+        state.elapsed = 0;
+      }
+    } else {
+      state.velocity.y -= 9.3 * dt;
+      ball.position.addScaledVector(state.velocity, dt);
+      ball.rotation.x += dt * 8;
+      ball.rotation.z += dt * 6;
+      if (ball.position.y <= 0.18) {
+        const landsInCourt = ball.position.z < -0.25
+          && Math.abs(ball.position.x) <= 8.7;
+        onTennisPoint(landsInCourt ? 'rugved' : 'opponent');
+        state.mode = 'incoming';
+        state.elapsed = 0;
+      }
+    }
+  });
+
   const seatsRef = useRef<THREE.InstancedMesh>(null);
   const bodiesRef = useRef<THREE.InstancedMesh>(null);
   const headsRef = useRef<THREE.InstancedMesh>(null);
@@ -857,16 +944,51 @@ function Stadium({ matchPlaying }: { matchPlaying: boolean }) {
       <Text position={[-4.5, 8.35, -29.25]} anchorX="left" fontSize={0.36} color="#f1f2e7" letterSpacing={0.14}>
         RUGVED / COURT 01
       </Text>
+      {/* Physical scoreboard at the far end of the arena. */}
+      <group position={[0, 8.2, -34.2]}>
+        <mesh castShadow>
+          <boxGeometry args={[12.2, 3.25, 0.55]} />
+          <meshStandardMaterial color="#152e25" metalness={0.22} roughness={0.44} />
+        </mesh>
+        <mesh position={[0, 0, 0.285]}>
+          <planeGeometry args={[11.72, 2.78]} />
+          <meshBasicMaterial color="#234638" />
+        </mesh>
+        <Text position={[0, 0.92, 0.31]} anchorX="center" fontSize={0.29} color="#dce6ce" letterSpacing={0.17}>
+          RUGVED / COURT 01
+        </Text>
+        <Text position={[-3.25, 0.15, 0.31]} anchorX="center" fontSize={0.18} color="#b8d3bd" letterSpacing={0.04}>
+          RUGVED
+        </Text>
+        <Text position={[0, 0.1, 0.32]} anchorX="center" fontSize={0.64} color="#f1f5dc">
+          {tennisScore.rugved} : {tennisScore.opponent}
+        </Text>
+        <Text position={[3.25, 0.15, 0.31]} anchorX="center" fontSize={0.18} color="#b8d3bd" letterSpacing={0.04}>
+          GUEST
+        </Text>
+        <Text position={[0, -0.83, 0.31]} anchorX="center" fontSize={0.14} color="#d5bb83" letterSpacing={0.07}>
+          {tennisGameActive ? 'PRACTICE RALLY / SPACE TO HIT' : 'CLUB SCOREBOARD / PRACTICE READY'}
+        </Text>
+      </group>
+      <mesh ref={practiceBall} visible={tennisGameActive} position={[0, 2.2, -12.5]} castShadow>
+        <sphereGeometry args={[0.19, 20, 20]} />
+        <meshStandardMaterial color="#e4ed6a" roughness={0.42} emissive="#656d1d" emissiveIntensity={0.13} />
+      </mesh>
       <pointLight position={[0, 12, -22]} intensity={1.8} distance={54} color="#fff2d5" />
     </group>
   );
 }
 
-export function Scene({ progress, onSelectProject, matchPlaying, exploreMode }: {
+export function Scene({ progress, onSelectProject, matchPlaying, exploreMode, tennisGameActive, tennisHitSignal, tennisScore, onTennisPoint, onStadiumZoneChange }: {
   progress: number;
   onSelectProject: (number: string) => void;
   matchPlaying: boolean;
   exploreMode: boolean;
+  tennisGameActive: boolean;
+  tennisHitSignal: number;
+  tennisScore: { rugved: number; opponent: number };
+  onTennisPoint: (winner: 'rugved' | 'opponent') => void;
+  onStadiumZoneChange: (inside: boolean) => void;
 }){
   const { camera, gl } = useThree();
   const path=useMemo(()=>new THREE.CatmullRomCurve3([
@@ -888,6 +1010,7 @@ export function Scene({ progress, onSelectProject, matchPlaying, exploreMode }: 
   const pos=useRef(new THREE.Vector3());
   const look=useRef(new THREE.Vector3());
   const mouse=useRef({x:0,y:0});
+  const stadiumZone = useRef(false);
   const explorer = useRef({
     position: new THREE.Vector3(0, 2.5, -73),
     yaw: 0,
@@ -913,14 +1036,18 @@ export function Scene({ progress, onSelectProject, matchPlaying, exploreMode }: 
     state.dragging = false;
     if (!exploreMode) {
       gl.domElement.style.cursor = 'auto';
+      if (stadiumZone.current) {
+        stadiumZone.current = false;
+        onStadiumZoneChange(false);
+      }
       return;
     }
 
-    // Start from the guided-tour camera position so exploration feels continuous.
+    // Start in the current view. Movement constraints widen as the corridor opens into the court.
     state.position.copy(camera.position);
     state.position.x = THREE.MathUtils.clamp(state.position.x, -10.5, 10.2);
     state.position.y = 2.5;
-    state.position.z = THREE.MathUtils.clamp(state.position.z, -103.5, -57.5);
+    state.position.z = THREE.MathUtils.clamp(state.position.z, -203.5, -57.5);
     const direction = new THREE.Vector3();
     camera.getWorldDirection(direction);
     state.yaw = Math.atan2(direction.x, -direction.z);
@@ -936,6 +1063,11 @@ export function Scene({ progress, onSelectProject, matchPlaying, exploreMode }: 
       state.lastX = event.clientX;
       state.lastY = event.clientY;
       canvas.style.cursor = 'grabbing';
+      try {
+        canvas.setPointerCapture(event.pointerId);
+      } catch {
+        // Pointer capture is optional on older browsers; drag tracking also uses the canvas.
+      }
     };
     const onPointerMove = (event: PointerEvent) => {
       if (!state.dragging) return;
@@ -943,11 +1075,16 @@ export function Scene({ progress, onSelectProject, matchPlaying, exploreMode }: 
       const dy = event.clientY - state.lastY;
       state.lastX = event.clientX;
       state.lastY = event.clientY;
-      state.yaw += dx * 0.0032;
-      state.pitch = THREE.MathUtils.clamp(state.pitch - dy * 0.0025, -0.62, 0.62);
+      state.yaw += dx * 0.0058;
+      state.pitch = THREE.MathUtils.clamp(state.pitch - dy * 0.004, -0.82, 0.82);
     };
-    const onPointerUp = () => {
+    const onPointerUp = (event: PointerEvent) => {
       state.dragging = false;
+      try {
+        if (canvas.hasPointerCapture(event.pointerId)) canvas.releasePointerCapture(event.pointerId);
+      } catch {
+        // Ignore unsupported pointer capture.
+      }
       canvas.style.cursor = 'grab';
     };
     const onKeyDown = (event: KeyboardEvent) => {
@@ -967,15 +1104,17 @@ export function Scene({ progress, onSelectProject, matchPlaying, exploreMode }: 
     };
 
     canvas.addEventListener('pointerdown', onPointerDown);
-    window.addEventListener('pointermove', onPointerMove);
-    window.addEventListener('pointerup', onPointerUp);
+    canvas.addEventListener('pointermove', onPointerMove);
+    canvas.addEventListener('pointerup', onPointerUp);
+    canvas.addEventListener('pointercancel', onPointerUp);
     window.addEventListener('keydown', onKeyDown);
     window.addEventListener('keyup', onKeyUp);
     window.addEventListener('blur', onBlur);
     return () => {
       canvas.removeEventListener('pointerdown', onPointerDown);
-      window.removeEventListener('pointermove', onPointerMove);
-      window.removeEventListener('pointerup', onPointerUp);
+      canvas.removeEventListener('pointermove', onPointerMove);
+      canvas.removeEventListener('pointerup', onPointerUp);
+      canvas.removeEventListener('pointercancel', onPointerUp);
       window.removeEventListener('keydown', onKeyDown);
       window.removeEventListener('keyup', onKeyUp);
       window.removeEventListener('blur', onBlur);
@@ -983,7 +1122,17 @@ export function Scene({ progress, onSelectProject, matchPlaying, exploreMode }: 
       state.dragging = false;
       canvas.style.cursor = 'auto';
     };
-  }, [exploreMode, camera, gl]);
+  }, [exploreMode, camera, gl, onStadiumZoneChange]);
+
+  useEffect(() => {
+    if (!exploreMode || !tennisGameActive) return;
+    const state = explorer.current;
+    state.position.set(0, 2.5, -146.4);
+    state.yaw = 0;
+    state.pitch = -0.025;
+    camera.position.copy(state.position);
+    camera.lookAt(0, 2.35, -162);
+  }, [tennisGameActive, exploreMode, camera]);
 
   useFrame((_,dt)=>{
     if (exploreMode) {
@@ -997,9 +1146,22 @@ export function Scene({ progress, onSelectProject, matchPlaying, exploreMode }: 
       if (keys.has('s') || keys.has('arrowdown')) state.position.addScaledVector(forward, -speed);
       if (keys.has('d') || keys.has('arrowright')) state.position.addScaledVector(right, speed);
       if (keys.has('a') || keys.has('arrowleft')) state.position.addScaledVector(right, -speed);
-      state.position.x = THREE.MathUtils.clamp(state.position.x, -10.55, 10.35);
-      state.position.z = THREE.MathUtils.clamp(state.position.z, -104.5, -57.2);
+      if (tennisGameActive) {
+        state.position.x = THREE.MathUtils.clamp(state.position.x, -7.8, 7.8);
+        state.position.z = THREE.MathUtils.clamp(state.position.z, -178.5, -143.4);
+      } else {
+        const tunnel = state.position.z < -111.5 && state.position.z >= -137;
+        const corridor = state.position.z >= -111.5;
+        const xLimit = corridor ? 10.55 : tunnel ? 5.5 : 18.4;
+        state.position.x = THREE.MathUtils.clamp(state.position.x, -xLimit, xLimit);
+        state.position.z = THREE.MathUtils.clamp(state.position.z, -203.5, -57.2);
+      }
       state.position.y = 2.5;
+      const isInStadium = state.position.z < -132.5;
+      if (isInStadium !== stadiumZone.current) {
+        stadiumZone.current = isInStadium;
+        onStadiumZoneChange(isInStadium);
+      }
       direction.set(
         Math.sin(state.yaw) * Math.cos(state.pitch),
         Math.sin(state.pitch),
@@ -1064,7 +1226,13 @@ export function Scene({ progress, onSelectProject, matchPlaying, exploreMode }: 
     <TennisObject position={[-3.9,1.15,-43]} kind="ball"/>
     <LockerRoom onSelectProject={onSelectProject}/>
     <ApproachTunnel/>
-    <Stadium matchPlaying={matchPlaying}/>
+    <Stadium
+      matchPlaying={matchPlaying && !tennisGameActive}
+      tennisGameActive={tennisGameActive}
+      tennisHitSignal={tennisHitSignal}
+      tennisScore={tennisScore}
+      onTennisPoint={onTennisPoint}
+    />
     <Sparkles count={34} scale={[9,6,125]} position={[0,4,-72]} size={0.9} speed={0.1} opacity={0.11}/>
     <Environment preset="dawn" environmentIntensity={0.58} background={false}/>
   </>;
