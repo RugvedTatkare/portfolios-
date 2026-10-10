@@ -13,6 +13,10 @@ export default function App() {
   const [selectedProjectNumber, setSelectedProjectNumber] = useState<string | null>(null);
   const [matchPlaying, setMatchPlaying] = useState(true);
   const [exploreMode, setExploreMode] = useState(false);
+  const [inStadiumZone, setInStadiumZone] = useState(false);
+  const [tennisGameActive, setTennisGameActive] = useState(false);
+  const [tennisHitSignal, setTennisHitSignal] = useState(0);
+  const [tennisScore, setTennisScore] = useState({ rugved: 0, opponent: 0 });
   const lenisRef = useRef<Lenis | null>(null);
   const progressRef = useRef(0);
   const snapLockedRef = useRef(false);
@@ -21,11 +25,33 @@ export default function App() {
   const selectedProject = portfolio.projects.find((project) => project.number === selectedProjectNumber) ?? null;
   const closeProject = useCallback(() => setSelectedProjectNumber(null), []);
   const toggleMatch = useCallback(() => setMatchPlaying((playing) => !playing), []);
-  const toggleExplore = useCallback(() => setExploreMode((active) => !active), []);
-  const exitExplore = useCallback(() => setExploreMode(false), []);
+  const toggleExplore = useCallback(() => {
+    setExploreMode((active) => !active);
+    setTennisGameActive(false);
+    setInStadiumZone(false);
+  }, []);
+  const exitExplore = useCallback(() => {
+    setExploreMode(false);
+    setTennisGameActive(false);
+    setInStadiumZone(false);
+  }, []);
+  const toggleTennisGame = useCallback(() => {
+    if (tennisGameActive) {
+      setTennisGameActive(false);
+    } else {
+      setTennisScore({ rugved: 0, opponent: 0 });
+      setTennisGameActive(true);
+    }
+  }, [tennisGameActive]);
+  const requestTennisHit = useCallback(() => setTennisHitSignal((signal) => signal + 1), []);
+  const onTennisPoint = useCallback((winner: 'rugved' | 'opponent') => {
+    setTennisScore((score) => ({ ...score, [winner]: score[winner] + 1 }));
+  }, []);
 
   const navigateToPhase = useCallback((index: number) => {
     setExploreMode(false);
+    setTennisGameActive(false);
+    setInStadiumZone(false);
     const boundedIndex = Math.max(0, Math.min(PHASE_RATIOS.length - 1, index));
     const lenis = lenisRef.current;
     if (!lenis) return;
@@ -205,6 +231,14 @@ export default function App() {
         if (event.key === 'Escape') {
           event.preventDefault();
           exitExplore();
+        } else if (
+          tennisGameActive &&
+          event.code === 'Space' &&
+          !event.repeat &&
+          !isInteractiveTarget(event.target)
+        ) {
+          event.preventDefault();
+          requestTennisHit();
         }
         return;
       }
@@ -236,7 +270,7 @@ export default function App() {
       window.removeEventListener('keydown', handleKeyDown, true);
       if (wheelResetTimerRef.current !== null) window.clearTimeout(wheelResetTimerRef.current);
     };
-  }, [navigateToPhase, selectedProjectNumber, exploreMode, exitExplore]);
+  }, [navigateToPhase, selectedProjectNumber, exploreMode, exitExplore, tennisGameActive, requestTennisHit]);
 
   return (
     <main className={`site ${exploreMode ? 'is-exploring' : ''}`} id="top">
@@ -247,7 +281,17 @@ export default function App() {
           camera={{ position: [0, 2.3, 11], fov: 48, near: 0.1, far: 260 }}
           gl={{ antialias: true, powerPreference: 'high-performance' }}
         >
-          <Scene progress={progress} onSelectProject={setSelectedProjectNumber} matchPlaying={matchPlaying} exploreMode={exploreMode} />
+          <Scene
+            progress={progress}
+            onSelectProject={setSelectedProjectNumber}
+            matchPlaying={matchPlaying}
+            exploreMode={exploreMode}
+            tennisGameActive={tennisGameActive}
+            tennisHitSignal={tennisHitSignal}
+            tennisScore={tennisScore}
+            onTennisPoint={onTennisPoint}
+            onStadiumZoneChange={setInStadiumZone}
+          />
         </Canvas>
       </div>
       <Overlay
@@ -260,6 +304,11 @@ export default function App() {
         onToggleMatch={toggleMatch}
         exploreMode={exploreMode}
         onToggleExplore={toggleExplore}
+        inStadiumZone={inStadiumZone}
+        tennisGameActive={tennisGameActive}
+        tennisScore={tennisScore}
+        onToggleTennisGame={toggleTennisGame}
+        onTennisHit={requestTennisHit}
       />
       <div className="scroll-track">
         <section className="scroll-space scroll-space--intro" />
