@@ -25,7 +25,7 @@ function sendMovementKey(key: string, type: 'keydown' | 'keyup') {
   window.dispatchEvent(new KeyboardEvent(type, { key, bubbles: true, cancelable: true }));
 }
 
-export function Overlay({ progress, selectedProject, onSelectProject, onNavigate, onCloseProject, matchPlaying, onToggleMatch, exploreMode, onToggleExplore }: {
+export function Overlay({ progress, selectedProject, onSelectProject, onNavigate, onCloseProject, matchPlaying, onToggleMatch, exploreMode, onToggleExplore, inStadiumZone, tennisGameActive, tennisScore, onToggleTennisGame, onTennisHit }: {
   progress: number;
   selectedProject: Project | null;
   onSelectProject: (number: string) => void;
@@ -35,6 +35,11 @@ export function Overlay({ progress, selectedProject, onSelectProject, onNavigate
   onToggleMatch: () => void;
   exploreMode: boolean;
   onToggleExplore: () => void;
+  inStadiumZone: boolean;
+  tennisGameActive: boolean;
+  tennisScore: { rugved: number; opponent: number };
+  onToggleTennisGame: () => void;
+  onTennisHit: () => void;
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSkill, setActiveSkill] = useState<string | null>(null);
@@ -187,24 +192,41 @@ export function Overlay({ progress, selectedProject, onSelectProject, onNavigate
           </>
         ) : (
           <>
-            <div className="locker-explore-icon locker-explore-icon--live"><span>⌖</span></div>
+            <div className="locker-explore-icon locker-explore-icon--live"><span>{inStadiumZone ? '🏟' : '⌖'}</span></div>
             <div className="locker-explore-copy">
-              <strong>FREE LOOK / EXPLORATION MODE</strong>
-              <span><b>Drag</b> to look around · <b>W A S D</b> or <b>↑ ← ↓ →</b> to move · <b>Shift</b> to move faster · Click a project locker for details.</span>
+              <strong>{tennisGameActive ? 'COURT 01 / PRACTICE MODE' : inStadiumZone ? 'YOU MADE IT TO THE STADIUM' : 'FREE LOOK / EXPLORATION MODE'}</strong>
+              <span>{tennisGameActive
+                ? 'Drag to look · WASD / arrows to move · Press Space or Hit Ball when it comes close.'
+                : inStadiumZone
+                  ? 'Explore the court, check the live scoreboard, or start a playable tennis rally.'
+                  : 'Click-drag anywhere on the scene to turn · WASD / arrows to walk · Shift to move faster · Click a project board to expand its details.'}</span>
             </div>
-            <button onClick={onToggleExplore}>Return to guided tour <span>↗</span></button>
+            {inStadiumZone && <button className="play-tennis-button" onClick={onToggleTennisGame}>{tennisGameActive ? 'End practice' : 'Play tennis'} <span>{tennisGameActive ? 'Ⅱ' : '→'}</span></button>}
+            <button className="return-tour-button" onClick={onToggleExplore}>Return to guided tour <span>↗</span></button>
           </>
         )}
       </aside>
     )}
 
-    {exploreMode && active === 3 && !selectedProject && (
+    {exploreMode && !selectedProject && (
       <div className="explore-dpad" aria-label="Touch movement controls">
         <button className="explore-dpad-up" aria-label="Move forward" onPointerDown={(event) => { event.preventDefault(); sendMovementKey('w', 'keydown'); }} onPointerUp={() => sendMovementKey('w', 'keyup')} onPointerLeave={() => sendMovementKey('w', 'keyup')} onPointerCancel={() => sendMovementKey('w', 'keyup')}>↑</button>
         <button className="explore-dpad-left" aria-label="Move left" onPointerDown={(event) => { event.preventDefault(); sendMovementKey('a', 'keydown'); }} onPointerUp={() => sendMovementKey('a', 'keyup')} onPointerLeave={() => sendMovementKey('a', 'keyup')} onPointerCancel={() => sendMovementKey('a', 'keyup')}>←</button>
         <button className="explore-dpad-down" aria-label="Move backward" onPointerDown={(event) => { event.preventDefault(); sendMovementKey('s', 'keydown'); }} onPointerUp={() => sendMovementKey('s', 'keyup')} onPointerLeave={() => sendMovementKey('s', 'keyup')} onPointerCancel={() => sendMovementKey('s', 'keyup')}>↓</button>
         <button className="explore-dpad-right" aria-label="Move right" onPointerDown={(event) => { event.preventDefault(); sendMovementKey('d', 'keydown'); }} onPointerUp={() => sendMovementKey('d', 'keyup')} onPointerLeave={() => sendMovementKey('d', 'keyup')} onPointerCancel={() => sendMovementKey('d', 'keyup')}>→</button>
       </div>
+    )}
+
+    {exploreMode && inStadiumZone && tennisGameActive && !selectedProject && (
+      <aside className="tennis-play-hud" aria-label="Practice tennis controls">
+        <div className="tennis-play-score">
+          <span>COURT 01 / PRACTICE</span>
+          <strong>{tennisScore.rugved}<i> — </i>{tennisScore.opponent}</strong>
+          <small>RUGVED <b>·</b> OPPONENT</small>
+        </div>
+        <p>Move with WASD. Click-drag to aim your view. Hit when the ball comes close.</p>
+        <button onClick={onTennisHit}>HIT BALL <span>SPACE ↗</span></button>
+      </aside>
     )}
 
     {matchVisible && (
