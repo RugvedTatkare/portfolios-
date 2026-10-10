@@ -65,8 +65,6 @@ function WallArt({side,z,title,sub}:{side:-1|1;z:number;title:string;sub:string}
 
 type Project = (typeof portfolio.projects)[number];
 
-type Project = (typeof portfolio.projects)[number];
-
 function ProjectLocker({ project, index, position, onSelect }: {
   project: Project;
   index: number;
@@ -692,7 +690,7 @@ export function Scene({ progress, onSelectProject }: { progress: number; onSelec
     <color attach="background" args={['#afd8ef']}/>
     <fog attach="fog" args={['#b7d7e2',82,245]}/>
     <Sky distance={450000} sunPosition={[70, 92, 35]} turbidity={6.5} rayleigh={2.4} mieCoefficient={0.004} mieDirectionalG={0.82}/>
-    <hemisphereLight skyColor="#c9eaff" groundColor="#879679" intensity={1.65}/>
+    <hemisphereLight args={["#c9eaff", "#879679", 1.65]}/>
     <ambientLight intensity={0.9} color="#f0f4e9"/>
     <directionalLight position={[-28, 48, 15]} intensity={3.4} color="#fff4dc" castShadow shadow-mapSize={[2048,2048]} shadow-bias={-0.0002}/>
     <directionalLight position={[14, 28, -165]} intensity={1.8} color="#e1f2ff"/>
