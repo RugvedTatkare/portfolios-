@@ -96,7 +96,7 @@ function ClubTrophyCase({ position, side }: {
             <meshStandardMaterial color="#b48f4f" metalness={0.58} roughness={0.32} />
           </mesh>
           <mesh position={[0, 0.02, 0]}>
-            <cupGeometry args={[0.12, 0.2, 0.14, 18]} />
+            <cylinderGeometry args={[0.12, 0.055, 0.2, 18]} />
             <meshStandardMaterial color="#ddc274" metalness={0.76} roughness={0.22} />
           </mesh>
           <mesh position={[-0.15, 0.0, 0]} rotation={[0, 0, Math.PI / 2]}>
@@ -397,11 +397,6 @@ function SideSportsLocker({ side, z, number }: { side: -1 | 1; z: number; number
 }
 
 function LockerRoom({ onSelectProject }: { onSelectProject: (number: string) => void }) {
-  const lockerPositions: [number, number, number][] = [
-    [-6.25, 2.95, -82.2],
-    [0, 3.1, -84.0],
-    [6.25, 2.95, -82.2],
-  ];
   const sidePositions = Array.from({ length: 8 }, (_, i) => -60 - i * 5.5);
   return (
     <group>
