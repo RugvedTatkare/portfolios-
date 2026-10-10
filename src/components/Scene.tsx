@@ -39,6 +39,160 @@ function Planter({position,scale=1}:{position:[number,number,number];scale?:numb
   </group>
 }
 
+function LobbyBench({ position, rotationY = 0 }: {
+  position: [number, number, number];
+  rotationY?: number;
+}) {
+  return (
+    <group position={position} rotation={[0, rotationY, 0]}>
+      <mesh position={[0, 0.62, 0]} castShadow receiveShadow>
+        <boxGeometry args={[2.35, 0.16, 0.7]} />
+        <meshStandardMaterial color="#6f604b" roughness={0.55} />
+      </mesh>
+      <mesh position={[0, 0.98, -0.27]} castShadow>
+        <boxGeometry args={[2.35, 0.58, 0.12]} />
+        <meshStandardMaterial color="#234b3b" roughness={0.66} />
+      </mesh>
+      {[-0.93, 0.93].map((x) => (
+        <mesh key={x} position={[x, 0.31, 0]} castShadow>
+          <boxGeometry args={[0.12, 0.62, 0.54]} />
+          <meshStandardMaterial color="#9c9b8d" metalness={0.42} roughness={0.4} />
+        </mesh>
+      ))}
+      <mesh position={[0, 0.72, 0.365]}>
+        <boxGeometry args={[1.95, 0.025, 0.012]} />
+        <meshBasicMaterial color="#cbb080" />
+      </mesh>
+    </group>
+  );
+}
+
+function ClubTrophyCase({ position, side }: {
+  position: [number, number, number];
+  side: -1 | 1;
+}) {
+  return (
+    <group position={position} rotation={[0, side === -1 ? Math.PI / 2 : -Math.PI / 2, 0]}>
+      <mesh position={[0, 0.38, 0]} castShadow receiveShadow>
+        <boxGeometry args={[1.45, 0.76, 0.78]} />
+        <meshStandardMaterial color="#a5aa9c" roughness={0.48} metalness={0.18} />
+      </mesh>
+      <mesh position={[0, 0.8, 0]}>
+        <boxGeometry args={[1.62, 0.08, 0.88]} />
+        <meshStandardMaterial color="#4b5d4c" roughness={0.43} metalness={0.25} />
+      </mesh>
+      <mesh position={[0, 1.46, 0]}>
+        <boxGeometry args={[1.38, 1.2, 0.7]} />
+        <meshPhysicalMaterial color="#dce9df" transparent opacity={0.18} roughness={0.08} metalness={0.08} transmission={0.2} />
+      </mesh>
+      {[-0.42, 0, 0.42].map((x, i) => (
+        <group key={x} position={[x, 1.32 + (i === 1 ? 0.1 : 0), 0.03]}>
+          <mesh position={[0, -0.27, 0]}>
+            <cylinderGeometry args={[0.035, 0.045, 0.34, 12]} />
+            <meshStandardMaterial color="#c6a55e" metalness={0.72} roughness={0.28} />
+          </mesh>
+          <mesh position={[0, -0.46, 0]}>
+            <cylinderGeometry args={[0.13, 0.13, 0.055, 16]} />
+            <meshStandardMaterial color="#b48f4f" metalness={0.58} roughness={0.32} />
+          </mesh>
+          <mesh position={[0, 0.02, 0]}>
+            <cupGeometry args={[0.12, 0.2, 0.14, 18]} />
+            <meshStandardMaterial color="#ddc274" metalness={0.76} roughness={0.22} />
+          </mesh>
+          <mesh position={[-0.15, 0.0, 0]} rotation={[0, 0, Math.PI / 2]}>
+            <torusGeometry args={[0.075, 0.018, 6, 12, Math.PI]} />
+            <meshStandardMaterial color="#ddc274" metalness={0.72} roughness={0.25} />
+          </mesh>
+          <mesh position={[0.15, 0.0, 0]} rotation={[0, 0, -Math.PI / 2]}>
+            <torusGeometry args={[0.075, 0.018, 6, 12, Math.PI]} />
+            <meshStandardMaterial color="#ddc274" metalness={0.72} roughness={0.25} />
+          </mesh>
+        </group>
+      ))}
+      <Text position={[0, 0.43, 0.405]} anchorX="center" fontSize={0.075} color="#e5e8d8" letterSpacing={0.08}>
+        CLUB HONOURS
+      </Text>
+    </group>
+  );
+}
+
+function RacketAndBallStand({ position, side }: {
+  position: [number, number, number];
+  side: -1 | 1;
+}) {
+  return (
+    <group position={position} rotation={[0, side === -1 ? Math.PI / 2 : -Math.PI / 2, 0]}>
+      <mesh position={[0, 0.23, 0]} castShadow>
+        <cylinderGeometry args={[0.48, 0.54, 0.38, 16]} />
+        <meshStandardMaterial color="#315743" metalness={0.24} roughness={0.58} wireframe />
+      </mesh>
+      {[-0.3, 0, 0.3].map((x, i) => (
+        <group key={x} position={[x, 1.12, -0.02]} rotation={[0.1, 0, (i - 1) * 0.16]}>
+          <mesh>
+            <torusGeometry args={[0.31, 0.035, 8, 26]} />
+            <meshStandardMaterial color={i === 1 ? "#c3c9b8" : "#b5c5ad"} metalness={0.5} roughness={0.34} />
+          </mesh>
+          <mesh position={[0, -0.49, 0]}>
+            <cylinderGeometry args={[0.028, 0.035, 0.72, 8]} />
+            <meshStandardMaterial color="#355541" roughness={0.52} />
+          </mesh>
+          <mesh>
+            <circleGeometry args={[0.27, 18]} />
+            <meshBasicMaterial color="#dce8d8" wireframe transparent opacity={0.45} />
+          </mesh>
+        </group>
+      ))}
+      {[-0.23, 0, 0.23].map((x) => (
+        <mesh key={x} position={[x, 0.48, 0.18]}>
+          <sphereGeometry args={[0.105, 16, 12]} />
+          <meshStandardMaterial color="#d6e265" roughness={0.62} />
+        </mesh>
+      ))}
+      <mesh position={[0, 0.02, 0]}>
+        <boxGeometry args={[1.1, 0.07, 1.05]} />
+        <meshStandardMaterial color="#a0a799" roughness={0.52} />
+      </mesh>
+    </group>
+  );
+}
+
+function ClubWayfindingSign({ side, z }: { side: -1 | 1; z: number }) {
+  return (
+    <group position={[side * 4.84, 2.75, z]} rotation={[0, side === -1 ? Math.PI / 2 : -Math.PI / 2, 0]}>
+      <mesh castShadow>
+        <boxGeometry args={[2.8, 2.55, 0.15]} />
+        <meshStandardMaterial color="#244b3b" roughness={0.55} metalness={0.15} />
+      </mesh>
+      <mesh position={[0, 0, 0.09]}>
+        <boxGeometry args={[2.6, 2.35, 0.035]} />
+        <meshStandardMaterial color="#e6e8d9" roughness={0.74} />
+      </mesh>
+      <Text position={[-1.13, 0.79, 0.125]} anchorX="left" fontSize={0.115} color="#315c47" letterSpacing={0.08}>
+        CLUBHOUSE / 01
+      </Text>
+      <Text position={[-1.13, 0.36, 0.125]} anchorX="left" fontSize={0.23} color="#1d4635" letterSpacing={0.015}>
+        COURT GUIDE
+      </Text>
+      <mesh position={[0, 0.1, 0.13]}>
+        <boxGeometry args={[2.2, 0.018, 0.012]} />
+        <meshBasicMaterial color="#b7a16f" />
+      </mesh>
+      <Text position={[-1.13, -0.2, 0.125]} anchorX="left" fontSize={0.092} color="#42644f" lineHeight={1.3} maxWidth={2.25}>
+        01  Explore the lobby
+      </Text>
+      <Text position={[-1.13, -0.49, 0.125]} anchorX="left" fontSize={0.092} color="#42644f" lineHeight={1.3} maxWidth={2.25}>
+        02  Open a project locker
+      </Text>
+      <Text position={[-1.13, -0.78, 0.125]} anchorX="left" fontSize={0.092} color="#42644f" lineHeight={1.3} maxWidth={2.25}>
+        03  Enter the grass court
+      </Text>
+      <Text position={[-1.13, -1.07, 0.125]} anchorX="left" fontSize={0.082} color="#798b7b" letterSpacing={0.04}>
+        CURIOSITY IS THE FIRST MOVE
+      </Text>
+    </group>
+  );
+}
+
 function WallLight({x,z,side=1}:{x:number;z:number;side?:number}){
   return <group position={[x,2.7,z]}>
     <mesh position={[side*.08,0,0]}><boxGeometry args={[.055,4.2,.055]}/><meshBasicMaterial color="#e8c889"/></mesh>
@@ -777,9 +931,14 @@ export function Scene({ progress, onSelectProject, matchPlaying }: { progress: n
       {i%2===0&&<Skylight z={z+2}/>}
     </group>)}
     <Planter position={[-3.9,.05,-7]} scale={1.05}/><Planter position={[3.9,.05,-15]} scale={.9}/>
-    <Planter position={[-3.9,.05,-31]} scale={.85}/><Planter position={[3.9,.05,-46]} scale={1.05}/>
+    <Planter position={[-3.9,.05,-35]} scale={.85}/><Planter position={[3.9,.05,-46]} scale={1.05}/>
     <WallArt side={1} z={-12} title="DISCIPLINE" sub="Creativity / Progress / Repeat"/>
     <WallArt side={-1} z={-38} title="GOOD IDEAS" sub="Play longer. Think wider."/>
+    <ClubWayfindingSign side={1} z={-26}/>
+    <LobbyBench position={[-3.65,0,-20]} rotationY={Math.PI/2}/>
+    <LobbyBench position={[3.65,0,-43]} rotationY={-Math.PI/2}/>
+    <ClubTrophyCase position={[-3.68,0,-27]} side={-1}/>
+    <RacketAndBallStand position={[3.55,0,-27]} side={1}/>
     <TennisObject position={[4.15,1.75,-24]} kind="racket"/>
     <TennisObject position={[-3.9,1.15,-43]} kind="ball"/>
     <LockerRoom onSelectProject={onSelectProject}/>
