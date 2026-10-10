@@ -239,7 +239,7 @@ export default function App() {
   }, [navigateToPhase, selectedProjectNumber, exploreMode, exitExplore]);
 
   return (
-    <main className="site" id="top">
+    <main className={`site ${exploreMode ? 'is-exploring' : ''}`} id="top">
       <div className="scene-wrap" aria-hidden="true">
         <Canvas
           dpr={[1, 1.5]}
