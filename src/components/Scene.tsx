@@ -943,7 +943,7 @@ export function Scene({ progress, onSelectProject, matchPlaying, exploreMode }: 
       const dy = event.clientY - state.lastY;
       state.lastX = event.clientX;
       state.lastY = event.clientY;
-      state.yaw -= dx * 0.0032;
+      state.yaw += dx * 0.0032;
       state.pitch = THREE.MathUtils.clamp(state.pitch - dy * 0.0025, -0.62, 0.62);
     };
     const onPointerUp = () => {
@@ -951,6 +951,7 @@ export function Scene({ progress, onSelectProject, matchPlaying, exploreMode }: 
       canvas.style.cursor = 'grab';
     };
     const onKeyDown = (event: KeyboardEvent) => {
+      if (document.querySelector('.project-detail-backdrop')) return;
       const key = event.key.toLowerCase();
       if (!movementKeys.has(key)) return;
       state.keys.add(key);
