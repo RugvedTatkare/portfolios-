@@ -623,3 +623,44 @@ a:focus-visible,
 @media (prefers-reduced-motion: reduce) {
   .interactive-text, .interactive-project, .match-control, .mobile-menu-panel, .live-dot.is-live { animation: none; transition: none; }
 }
+
+
+/* Phase layouts: each editorial panel owns its own vertical space */
+.copy {
+  transition: none;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(214, 230, 196, .46) transparent;
+  overscroll-behavior: contain;
+}
+.copy--about, .copy--finale {
+  max-height: calc(75vh - 95px);
+  overflow-y: auto;
+}
+.copy--skills {
+  max-height: calc(78vh - 100px);
+  overflow-y: auto;
+}
+.copy--projects {
+  max-height: calc(88vh - 90px);
+  overflow-y: auto;
+}
+.copy--stadium {
+  max-height: calc(71vh - 100px);
+  overflow-y: auto;
+}
+/* Avoid having a second phase ghost behind the currently visible phase */
+.copy[style*="visibility: hidden"] { visibility: hidden !important; }
+.copy[style*="visibility: visible"] { visibility: visible !important; }
+.project-detail-backdrop { overscroll-behavior: contain; }
+.project-detail { overscroll-behavior: contain; }
+
+/* On mobile the available height starts below the top navigation */
+@media (max-width: 760px) {
+  .copy--about { max-height: calc(79vh - 115px); overflow-y: auto; }
+  .copy--skills { max-height: calc(82vh - 115px); overflow-y: auto; }
+  .copy--projects { max-height: calc(93vh - 135px); overflow-y: auto; }
+  .copy--finale { max-height: calc(78vh - 115px); overflow-y: auto; }
+  .copy--stadium { max-height: calc(72vh - 115px); overflow-y: auto; }
+  .copy--hero { max-height: calc(92vh - 110px); }
+}
