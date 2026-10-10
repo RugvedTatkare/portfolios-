@@ -862,8 +862,13 @@ function Stadium({ matchPlaying }: { matchPlaying: boolean }) {
   );
 }
 
-export function Scene({ progress, onSelectProject, matchPlaying }: { progress: number; onSelectProject: (number: string) => void; matchPlaying: boolean }){
-  const {camera}=useThree();
+export function Scene({ progress, onSelectProject, matchPlaying, exploreMode }: {
+  progress: number;
+  onSelectProject: (number: string) => void;
+  matchPlaying: boolean;
+  exploreMode: boolean;
+}){
+  const { camera, gl } = useThree();
   const path=useMemo(()=>new THREE.CatmullRomCurve3([
     new THREE.Vector3(0,2.35,11),
     new THREE.Vector3(0,2.4,-12),
@@ -883,8 +888,128 @@ export function Scene({ progress, onSelectProject, matchPlaying }: { progress: n
   const pos=useRef(new THREE.Vector3());
   const look=useRef(new THREE.Vector3());
   const mouse=useRef({x:0,y:0});
-  useEffect(()=>{const f=(e:PointerEvent)=>{mouse.current.x=(e.clientX/innerWidth-.5)*2;mouse.current.y=(e.clientY/innerHeight-.5)*2};addEventListener('pointermove',f,{passive:true});return()=>removeEventListener('pointermove',f)},[]);
+  const explorer = useRef({
+    position: new THREE.Vector3(0, 2.5, -73),
+    yaw: 0,
+    pitch: 0,
+    keys: new Set<string>(),
+    dragging: false,
+    lastX: 0,
+    lastY: 0,
+  });
+
+  useEffect(() => {
+    const f = (e: PointerEvent) => {
+      mouse.current.x = (e.clientX / innerWidth - .5) * 2;
+      mouse.current.y = (e.clientY / innerHeight - .5) * 2;
+    };
+    addEventListener('pointermove', f, { passive: true });
+    return () => removeEventListener('pointermove', f);
+  }, []);
+
+  useEffect(() => {
+    const state = explorer.current;
+    state.keys.clear();
+    state.dragging = false;
+    if (!exploreMode) {
+      gl.domElement.style.cursor = 'auto';
+      return;
+    }
+
+    // Start from the guided-tour camera position so exploration feels continuous.
+    state.position.copy(camera.position);
+    state.position.x = THREE.MathUtils.clamp(state.position.x, -10.5, 10.2);
+    state.position.y = 2.5;
+    state.position.z = THREE.MathUtils.clamp(state.position.z, -103.5, -57.5);
+    const direction = new THREE.Vector3();
+    camera.getWorldDirection(direction);
+    state.yaw = Math.atan2(direction.x, -direction.z);
+    state.pitch = THREE.MathUtils.clamp(Math.asin(THREE.MathUtils.clamp(direction.y, -1, 1)), -0.58, 0.58);
+
+    const canvas = gl.domElement;
+    canvas.style.cursor = 'grab';
+    const movementKeys = new Set(['w', 'a', 's', 'd', 'arrowup', 'arrowleft', 'arrowdown', 'arrowright', 'shift']);
+
+    const onPointerDown = (event: PointerEvent) => {
+      if (event.button !== 0) return;
+      state.dragging = true;
+      state.lastX = event.clientX;
+      state.lastY = event.clientY;
+      canvas.style.cursor = 'grabbing';
+    };
+    const onPointerMove = (event: PointerEvent) => {
+      if (!state.dragging) return;
+      const dx = event.clientX - state.lastX;
+      const dy = event.clientY - state.lastY;
+      state.lastX = event.clientX;
+      state.lastY = event.clientY;
+      state.yaw -= dx * 0.0032;
+      state.pitch = THREE.MathUtils.clamp(state.pitch - dy * 0.0025, -0.62, 0.62);
+    };
+    const onPointerUp = () => {
+      state.dragging = false;
+      canvas.style.cursor = 'grab';
+    };
+    const onKeyDown = (event: KeyboardEvent) => {
+      const key = event.key.toLowerCase();
+      if (!movementKeys.has(key)) return;
+      state.keys.add(key);
+      event.preventDefault();
+    };
+    const onKeyUp = (event: KeyboardEvent) => {
+      state.keys.delete(event.key.toLowerCase());
+    };
+    const onBlur = () => {
+      state.keys.clear();
+      state.dragging = false;
+      canvas.style.cursor = 'grab';
+    };
+
+    canvas.addEventListener('pointerdown', onPointerDown);
+    window.addEventListener('pointermove', onPointerMove);
+    window.addEventListener('pointerup', onPointerUp);
+    window.addEventListener('keydown', onKeyDown);
+    window.addEventListener('keyup', onKeyUp);
+    window.addEventListener('blur', onBlur);
+    return () => {
+      canvas.removeEventListener('pointerdown', onPointerDown);
+      window.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener('pointerup', onPointerUp);
+      window.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('keyup', onKeyUp);
+      window.removeEventListener('blur', onBlur);
+      state.keys.clear();
+      state.dragging = false;
+      canvas.style.cursor = 'auto';
+    };
+  }, [exploreMode, camera, gl]);
+
   useFrame((_,dt)=>{
+    if (exploreMode) {
+      const state = explorer.current;
+      const keys = state.keys;
+      const forward = new THREE.Vector3(Math.sin(state.yaw), 0, -Math.cos(state.yaw));
+      const right = new THREE.Vector3(Math.cos(state.yaw), 0, Math.sin(state.yaw));
+      const direction = new THREE.Vector3();
+      const speed = (keys.has('shift') ? 7.4 : 4.6) * Math.min(dt, 0.05);
+      if (keys.has('w') || keys.has('arrowup')) state.position.addScaledVector(forward, speed);
+      if (keys.has('s') || keys.has('arrowdown')) state.position.addScaledVector(forward, -speed);
+      if (keys.has('d') || keys.has('arrowright')) state.position.addScaledVector(right, speed);
+      if (keys.has('a') || keys.has('arrowleft')) state.position.addScaledVector(right, -speed);
+      state.position.x = THREE.MathUtils.clamp(state.position.x, -10.55, 10.35);
+      state.position.z = THREE.MathUtils.clamp(state.position.z, -104.5, -57.2);
+      state.position.y = 2.5;
+      direction.set(
+        Math.sin(state.yaw) * Math.cos(state.pitch),
+        Math.sin(state.pitch),
+        -Math.cos(state.yaw) * Math.cos(state.pitch)
+      );
+      camera.position.copy(state.position);
+      look.current.copy(state.position).add(direction);
+      camera.lookAt(look.current);
+      return;
+    }
+
     const p = clamp01(progress);
     const t = p < 0.4 ? p * 0.75 : p < 0.68 ? 0.3 + (p - 0.4) * 0.75 : 0.51 + (p - 0.68) * 1.5;
     path.getPointAt(t, pos.current); targetPath.getPointAt(t, look.current);
