@@ -21,7 +21,7 @@ function activateOnKeyboard(action: () => void) {
   };
 }
 
-export function Overlay({ progress, selectedProject, onSelectProject, onNavigate, onCloseProject, matchPlaying, onToggleMatch }: {
+export function Overlay({ progress, selectedProject, onSelectProject, onNavigate, onCloseProject, matchPlaying, onToggleMatch, exploreMode, onToggleExplore }: {
   progress: number;
   selectedProject: Project | null;
   onSelectProject: (number: string) => void;
@@ -29,6 +29,8 @@ export function Overlay({ progress, selectedProject, onSelectProject, onNavigate
   onCloseProject: () => void;
   matchPlaying: boolean;
   onToggleMatch: () => void;
+  exploreMode: boolean;
+  onToggleExplore: () => void;
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSkill, setActiveSkill] = useState<string | null>(null);
@@ -128,7 +130,7 @@ export function Overlay({ progress, selectedProject, onSelectProject, onNavigate
       <p className="skill-hint">{activeSkill ? 'Toolkit detail opened · Click again to collapse.' : 'Select any toolkit row to explore it.'}</p>
     </section>
 
-    <section className="copy copy--projects" style={{ opacity: projects, visibility: active === 3 ? 'visible' : 'hidden' }}>
+    <section className="copy copy--projects" style={{ opacity: projects, visibility: active === 3 && !exploreMode ? 'visible' : 'hidden' }}>
       <p className="eyebrow interactive-text" onClick={() => goto(0.54)}>04 / Project Lockers</p>
       <h2 className="interactive-text" role="button" tabIndex={0} onClick={() => goto(0.54)} onKeyDown={activateOnKeyboard(() => goto(0.54))}>Every build gets<br/>its own locker.</h2>
       <p className="interactive-text" onClick={() => goto(0.54)}>Click any 3D project board or a project row to open its complete breakdown.</p>
@@ -167,6 +169,30 @@ export function Overlay({ progress, selectedProject, onSelectProject, onNavigate
         <a href={portfolio.socials.email}>Email ↗</a>
       </div>
     </section>
+
+    {active === 3 && !selectedProject && (
+      <aside className={`locker-explore-panel ${exploreMode ? 'is-exploring' : ''}`} aria-label="Locker room exploration controls">
+        {!exploreMode ? (
+          <>
+            <div className="locker-explore-icon"><span>↗</span></div>
+            <div className="locker-explore-copy">
+              <strong>STEP INTO THE LOCKER ROOM</strong>
+              <span>Leave the guided camera and get close to each project's locker.</span>
+            </div>
+            <button onClick={onToggleExplore}>Explore lockers <span>→</span></button>
+          </>
+        ) : (
+          <>
+            <div className="locker-explore-icon locker-explore-icon--live"><span>⌖</span></div>
+            <div className="locker-explore-copy">
+              <strong>FREE LOOK / EXPLORATION MODE</strong>
+              <span><b>Drag</b> to look around · <b>W A S D</b> or <b>↑ ← ↓ →</b> to move · <b>Shift</b> to move faster · Click a project locker for details.</span>
+            </div>
+            <button onClick={onToggleExplore}>Return to guided tour <span>↗</span></button>
+          </>
+        )}
+      </aside>
+    )}
 
     {matchVisible && (
       <aside className="match-control" aria-label="Tennis match controls">
