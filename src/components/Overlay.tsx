@@ -12,10 +12,6 @@ const sections = [
 
 type Project = (typeof portfolio.projects)[number];
 
-function fade(progress: number, center: number, width = 0.13) {
-  return Math.max(0, 1 - Math.abs(progress - center) / width);
-}
-
 function activateOnKeyboard(action: () => void) {
   return (event: KeyboardEvent<HTMLElement>) => {
     if (event.key === 'Enter' || event.key === ' ') {
