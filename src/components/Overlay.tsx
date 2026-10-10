@@ -192,7 +192,7 @@ export function Overlay({ progress, selectedProject, onSelectProject, onNavigate
           </>
         ) : (
           <>
-            <div className="locker-explore-icon locker-explore-icon--live"><span>{inStadiumZone ? '🏟' : '⌖'}</span></div>
+            <div className="locker-explore-icon locker-explore-icon--live"><span>{inStadiumZone ? '▦' : '⌖'}</span></div>
             <div className="locker-explore-copy">
               <strong>{tennisGameActive ? 'COURT 01 / PRACTICE MODE' : inStadiumZone ? 'YOU MADE IT TO THE STADIUM' : 'FREE LOOK / EXPLORATION MODE'}</strong>
               <span>{tennisGameActive
