@@ -134,8 +134,8 @@ function LockerRoomInteriorFinishes() {
         <meshStandardMaterial color="#324a3d" roughness={0.4} metalness={0.08} />
       </mesh>
       {[-1, 1].map((side) => (
-        <mesh key={side} position={[side * 7.9, 0.018, -81.5]}>
-          <boxGeometry args={[7.45, 0.028, 55.9]} />
+        <mesh key={side} position={[side * 7.35, 0.018, -81.5]}>
+          <boxGeometry args={[8.55, 0.028, 55.9]} />
           <meshStandardMaterial color={side < 0 ? "#a5a28f" : "#b8b29f"} roughness={0.72} />
         </mesh>
       ))}
@@ -207,6 +207,9 @@ function LockerRoomInteriorFinishes() {
             <boxGeometry args={[2.6, 0.025, 0.09]} />
             <meshBasicMaterial color={i % 2 ? "#d4d4bf" : "#a8d0c4"} />
           </mesh>
+          <Text position={[0, -0.15, 0.095]} anchorX="center" fontSize={0.085} color="#244536" letterSpacing={0.11}>
+            {['ANALYSE / DESIGN', 'SOLVE / BUILD', 'TEST / REFINE', 'PLAY THE LONG GAME', 'COURT 01'][i]}
+          </Text>
         </group>
       ))}
     </group>
@@ -500,6 +503,23 @@ function ProjectLocker({ project, index, position, rotationY = 0, onSelect }: {
         <mesh position={[0, -0.03, 0.07]}>
           <boxGeometry args={[3.98, 2.82, 0.045]} />
           <meshPhysicalMaterial color="#10201d" metalness={0.12} roughness={0.35} clearcoat={0.5} />
+        </mesh>
+        {/* Fine brass reveal around each board, like a gallery-quality display case. */}
+        {[-1, 1].map((side) => (
+          <mesh key={side} position={[side * 1.99, -0.03, 0.113]}>
+            <boxGeometry args={[0.026, 2.82, 0.018]} />
+            <meshStandardMaterial color="#c4a36a" metalness={0.76} roughness={0.24} />
+          </mesh>
+        ))}
+        {[-1, 1].map((side) => (
+          <mesh key={side} position={[0, -0.03 + side * 1.41, 0.113]}>
+            <boxGeometry args={[3.98, 0.026, 0.018]} />
+            <meshStandardMaterial color="#c4a36a" metalness={0.76} roughness={0.24} />
+          </mesh>
+        ))}
+        <mesh position={[1.78, -0.1, 0.12]}>
+          <boxGeometry args={[0.018, 2.38, 0.018]} />
+          <meshBasicMaterial color="#a4c5a5" />
         </mesh>
         {/* Locker crown with perforated vents and club numbering */}
         <mesh position={[0, 1.55, 0.13]}>
