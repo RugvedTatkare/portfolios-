@@ -2,12 +2,12 @@ import { useEffect, useState, type KeyboardEvent } from 'react';
 import { portfolio } from '../data/portfolio';
 
 const sections = [
-  ['01', 'The Lobby', 'A first look at the world behind the work.', 0],
-  ['02', 'About Me', 'A little about how I think and build.', 0.2],
-  ['03', 'Skills', 'Tools, disciplines and things I keep exploring.', 0.38],
-  ['04', 'Project Lockers', 'Three builds. Three different problems.', 0.54],
-  ['05', 'The Walkout', 'Leaving the gallery and heading for the court.', 0.76],
-  ['06', 'The Stadium', 'Where the next point begins.', 0.94],
+  ['01', 'Home', 'A clear introduction to the person behind the work.', 0],
+  ['02', 'About', 'The background and perspective behind how I build.', 0.2],
+  ['03', 'Skills & Approach', 'The tools and ways of thinking I bring to a problem.', 0.38],
+  ['04', 'Selected Projects', 'Case studies across security, careers and legal NLP.', 0.54],
+  ['05', 'Experience', 'Leadership, collaboration and continued learning.', 0.76],
+  ['06', 'Contact', 'Start a conversation about something meaningful.', 0.94],
 ] as const;
 
 type Project = (typeof portfolio.projects)[number];
@@ -76,9 +76,10 @@ export function Overlay({ progress, selectedProject, onSelectProject, onNavigate
       <a className="brand interactive-control" href="#top" aria-label="Back to the lobby" onClick={(event) => { event.preventDefault(); goto(0); }}>R.</a>
       <nav aria-label="Main navigation">
         <a href="#top" onClick={(event) => { event.preventDefault(); goto(0); }}>Home</a>
-        <a href="#journey" onClick={(event) => { event.preventDefault(); goto(0.2); }}>Journey</a>
+        <a href="#about" onClick={(event) => { event.preventDefault(); goto(0.2); }}>About</a>
+        <a href="#skills" onClick={(event) => { event.preventDefault(); goto(0.38); }}>Skills</a>
         <a href="#projects" onClick={(event) => { event.preventDefault(); goto(0.54); }}>Projects</a>
-        <a href="#gallery" onClick={(event) => { event.preventDefault(); goto(0.76); }}>Gallery</a>
+        <a href="#experience" onClick={(event) => { event.preventDefault(); goto(0.76); }}>Experience</a>
         <a href="#contact" onClick={(event) => { event.preventDefault(); goto(0.94); }}>Contact</a>
       </nav>
       <div className="topbar-meta"><span>PORTFOLIO / 2026</span><span>{portfolio.location.toUpperCase()}</span></div>
@@ -99,31 +100,68 @@ export function Overlay({ progress, selectedProject, onSelectProject, onNavigate
       </button>)}
     </aside>
 
-    <div className="copy copy--hero" style={{ opacity: hero, visibility: active === 0 ? 'visible' : 'hidden', transform: 'translate3d(0,-43%,0)' }}>
-      <p className="eyebrow interactive-text" onClick={() => goto(0)}>A portfolio, in motion.</p>
-      <h1 className="interactive-text" role="button" tabIndex={0} onClick={() => goto(0)} onKeyDown={activateOnKeyboard(() => goto(0))}>A Different<br/>Game<span>.</span></h1>
-      <p className="hero-line interactive-text" onClick={() => goto(0.38)}>Data · Design · Tennis · Beyond</p>
-      <p className="hero-desc interactive-text" onClick={() => goto(0.2)}>I’m Rugved — a data science student and creative builder interested in turning complex ideas into useful digital experiences.</p>
-      <p className="hero-credential interactive-text" onClick={() => goto(0.2)}>{portfolio.education}</p>
-      <button onClick={() => goto(0.2)}>Walk into my world <span>→</span></button>
+    <div className="copy copy--hero" style={{ opacity: hero, visibility: active === 0 ? 'visible' : 'hidden' }}>
+      <p className="eyebrow">DATA SCIENCE / CREATIVE TECHNOLOGY / PRODUCT</p>
+      <h1>Where data<br/>meets design<span>.</span></h1>
+      <p className="hero-line">ANALYTICS · PRODUCT THINKING · VISUAL STORYTELLING</p>
+      <p className="hero-desc">I’m Rugved Tatkare — a B.Tech Data Science student at NMIMS Mumbai who enjoys taking complex problems from analysis to useful, thoughtfully designed digital experiences.</p>
+      <p className="hero-credential">{portfolio.education}</p>
+      <div className="hero-actions">
+        <button onClick={() => goto(0.54)}>Explore selected work <span>↗</span></button>
+        <button className="button-secondary" onClick={() => goto(0.2)}>Read my story <span>↓</span></button>
+      </div>
     </div>
 
+    <aside className="editorial-sidecard hero-sidecard" style={{ opacity: hero, visibility: active === 0 ? 'visible' : 'hidden' }} aria-label="Portfolio focus">
+      <div className="sidecard-kicker"><span className="sidecard-live-dot" /> HOW I APPROACH A PROBLEM</div>
+      <article className="hero-lens">
+        <span className="hero-lens-number">01</span>
+        <div><strong>ANALYSE</strong><p>Find the signal in the data, understand the context and define the real problem.</p></div>
+      </article>
+      <article className="hero-lens">
+        <span className="hero-lens-number">02</span>
+        <div><strong>BUILD</strong><p>Turn the idea into a working model, application, dashboard or prototype.</p></div>
+      </article>
+      <article className="hero-lens">
+        <span className="hero-lens-number">03</span>
+        <div><strong>REFINE</strong><p>Care about clarity, usability and how the finished experience feels to people.</p></div>
+      </article>
+      <div className="sidecard-footer"><span>BASED IN</span><strong>{portfolio.location}</strong></div>
+    </aside>
+
     <section className="copy copy--about" style={{ opacity: about, visibility: active === 1 ? 'visible' : 'hidden' }}>
-      <p className="eyebrow interactive-text" onClick={() => goto(0.2)}>02 / About Me</p>
-      <h2 className="interactive-text" role="button" tabIndex={0} onClick={() => goto(0.2)} onKeyDown={activateOnKeyboard(() => goto(0.2))}>Curious by nature.<br/>Builder by instinct.</h2>
-      <p className="interactive-text" onClick={() => goto(0.38)}>{portfolio.about}</p>
-      <div className="line-list">
-        <button onClick={() => goto(0.2)}>{portfolio.education}</button>
-        <button onClick={() => goto(0.2)}>{portfolio.academic}</button>
-        <button onClick={() => goto(0.2)}>Latest semester GPA / 9.55 out of 10</button>
-        <button onClick={() => goto(0.94)}>Based in {portfolio.location} · Get in touch ↗</button>
+      <p className="eyebrow">02 / ABOUT</p>
+      <h2>Curious by nature.<br/>Purpose in the build.</h2>
+      <p>{portfolio.about}</p>
+      <div className="line-list fact-list">
+        <div><span className="fact-label">EDUCATION</span><strong>{portfolio.education}</strong></div>
+        <div><span className="fact-label">ACADEMIC SNAPSHOT</span><strong>{portfolio.academic}</strong></div>
+        <div><span className="fact-label">CURRENT FOCUS</span><strong>{portfolio.currently}</strong></div>
       </div>
     </section>
 
+    <aside className="editorial-sidecard about-sidecard" style={{ opacity: about, visibility: active === 1 ? 'visible' : 'hidden' }} aria-label="About Rugved at a glance">
+      <div className="sidecard-kicker">A LITTLE MORE CONTEXT</div>
+      <h3>Three things that shape my work.</h3>
+      <div className="about-quality">
+        <span className="quality-mark">A</span>
+        <div><strong>Analytical thinking</strong><p>I like breaking an open-ended question into smaller, testable parts.</p></div>
+      </div>
+      <div className="about-quality">
+        <span className="quality-mark">B</span>
+        <div><strong>Making ideas tangible</strong><p>I enjoy carrying a concept beyond the notebook into an interface or working prototype.</p></div>
+      </div>
+      <div className="about-quality">
+        <span className="quality-mark">C</span>
+        <div><strong>Creative collaboration</strong><p>Design work and committee experience have taught me to think about the audience, not just the output.</p></div>
+      </div>
+      <div className="about-interest-row"><span>INTERESTS</span><p>Data & analytics · Product thinking · Design · Business</p></div>
+    </aside>
+
     <section className="copy copy--skills" style={{ opacity: skills, visibility: active === 2 ? 'visible' : 'hidden' }}>
-      <p className="eyebrow interactive-text" onClick={() => goto(0.38)}>03 / Skills & Interests</p>
-      <h2 className="interactive-text" role="button" tabIndex={0} onClick={() => goto(0.38)} onKeyDown={activateOnKeyboard(() => goto(0.38))}>Analysis with a<br/>creative point of view.</h2>
-      <p className="interactive-text" onClick={() => goto(0.54)}>A mix of statistical thinking, machine learning, data storytelling and application development — with an ongoing interest in business and design.</p>
+      <p className="eyebrow">03 / SKILLS & APPROACH</p>
+      <h2>A toolkit built<br/>around problem-solving.</h2>
+      <p>A mix of statistical thinking, machine learning, data storytelling and application development — with an ongoing interest in business and design.</p>
       <div className="line-list skill-list">
         {[
           ['Python · SQL · JavaScript', 'Building blocks for analysis, data processing and web experiences.'],
@@ -139,45 +177,92 @@ export function Overlay({ progress, selectedProject, onSelectProject, onNavigate
       <p className="skill-hint">{activeSkill ? 'Toolkit detail opened · Click again to collapse.' : 'Select any toolkit row to explore it.'}</p>
     </section>
 
+    <aside className="editorial-sidecard skills-sidecard" style={{ opacity: skills, visibility: active === 2 ? 'visible' : 'hidden' }} aria-label="Creative and collaboration toolkit">
+      <div className="sidecard-kicker">THE SECOND TOOLKIT</div>
+      <h3>Technology is one part of the picture.</h3>
+      <div className="toolkit-block">
+        <span className="toolkit-label">VISUAL COMMUNICATION</span>
+        <p>Photoshop · Canva · Blender · Graphic design</p>
+        <small>Thinking about hierarchy, composition and how a message is seen.</small>
+      </div>
+      <div className="toolkit-block">
+        <span className="toolkit-label">PEOPLE & DELIVERY</span>
+        <p>Creative direction · Team coordination · Collaboration</p>
+        <small>Experience through Digital Creatives at IETE-SF, NMIMS.</small>
+      </div>
+      <div className="toolkit-block">
+        <span className="toolkit-label">WHAT I KEEP EXPLORING</span>
+        <p>Product strategy · Business · Entrepreneurship</p>
+        <small>How useful ideas become products people want to use.</small>
+      </div>
+    </aside>
+
+
+
     <section className="copy copy--projects" style={{ opacity: projects, visibility: active === 3 && !exploreMode ? 'visible' : 'hidden' }}>
-      <p className="eyebrow interactive-text" onClick={() => goto(0.54)}>04 / Project Lockers</p>
-      <h2 className="interactive-text" role="button" tabIndex={0} onClick={() => goto(0.54)} onKeyDown={activateOnKeyboard(() => goto(0.54))}>Every build gets<br/>its own locker.</h2>
-      <p className="interactive-text" onClick={() => goto(0.54)}>Click any 3D project board or a project row to open its complete breakdown.</p>
-      <div className="project-list">
-        {portfolio.projects.map((project) => <article className="project interactive-project" key={project.number} role="button" tabIndex={0} onClick={() => onSelectProject(project.number)} onKeyDown={activateOnKeyboard(() => onSelectProject(project.number))} aria-label={`Open details for ${project.title}`}>
-          <div className="project-head"><b>{project.number}</b><span>{project.title}</span><span className="project-open-mark">↗</span></div>
-          <small>{project.type}</small>
-          <p>{project.description}</p>
-          <div className="project-foot"><strong>{project.metric}</strong><span>{project.stack}</span></div>
+      <div className="projects-heading">
+        <div>
+          <p className="eyebrow">04 / SELECTED PROJECTS</p>
+          <h2>Selected work.<br/>Real problems.</h2>
+        </div>
+        <p className="projects-intro">I’m most interested in projects that turn a complex problem into something understandable and useful. Open a case study to see the challenge, approach, stack and outcome.</p>
+      </div>
+      <div className="project-showcase-grid">
+        {portfolio.projects.map((project) => <article className="project-card interactive-project" key={project.number} role="button" tabIndex={0} onClick={() => onSelectProject(project.number)} onKeyDown={activateOnKeyboard(() => onSelectProject(project.number))} aria-label={`Open details for ${project.title}`}>
+          <div className="project-card-top"><span className="project-card-number">{project.number}</span><span className="project-card-type">{project.type}</span><span className="project-card-open">↗</span></div>
+          <h3>{project.title}</h3>
+          <p className="project-card-description">{project.description}</p>
+          <div className="project-card-result"><span>HIGHLIGHT</span><strong>{project.metric}</strong></div>
+          <div className="project-card-stack">{project.stack.split(' · ').map((tech) => <span key={tech}>{tech}</span>)}</div>
+          <div className="project-card-footer"><span>VIEW CASE STUDY</span><span>↗</span></div>
         </article>)}
       </div>
+      <div className="project-section-note"><span>03 PROJECTS</span><i /> <span>SELECT A CARD OR A 3D LOCKER TO EXPLORE THE DETAILS</span></div>
     </section>
 
     <section className="copy copy--finale" style={{ opacity: finale, visibility: active === 4 ? 'visible' : 'hidden' }}>
-      <p className="eyebrow interactive-text" onClick={() => goto(0.76)}>05 / The Walkout</p>
-      <h2 className="interactive-text" role="button" tabIndex={0} onClick={() => goto(0.76)} onKeyDown={activateOnKeyboard(() => goto(0.76))}>Keep the discipline.<br/>Play the bigger game.</h2>
-      <p className="interactive-text" onClick={() => goto(0.94)}>Outside the code, I enjoy design leadership, collaborating across teams and helping make creative ideas real.</p>
-      <div className="line-list">
-        {portfolio.experience.map((item) => <button key={item.title} onClick={() => goto(0.2)}>{item.title} · {item.organization} ↗</button>)}
-        {portfolio.certifications.map((certification) => <button key={certification} onClick={() => goto(0.38)}>{certification} ↗</button>)}
+      <div className="experience-heading">
+        <div>
+          <p className="eyebrow">05 / EXPERIENCE & LEADERSHIP</p>
+          <h2>Leadership that<br/>goes beyond code.</h2>
+        </div>
+        <p>Building a good project is one thing. Communicating the idea, working with people and helping a team bring it to life are part of the work too.</p>
       </div>
-      <button className="walkout-cta" onClick={() => goto(0.94)}>Walk out onto the court <span>→</span></button>
+      <div className="experience-showcase">
+        {portfolio.experience.map((item, index) => <article className="experience-card" key={item.title}>
+          <div className="experience-card-meta"><span>0{index + 1} / EXPERIENCE</span><span>{'period' in item ? item.period : 'COMMUNITY'}</span></div>
+          <h3>{item.title}</h3>
+          <p className="experience-organization">{item.organization}</p>
+          <p className="experience-description">{item.description}</p>
+        </article>)}
+      </div>
+      <div className="certification-strip">
+        <div className="certification-heading"><span>CONTINUED LEARNING</span><small>Courses & foundations</small></div>
+        <div className="certification-list">{portfolio.certifications.map((certification) => <span key={certification}>{certification}</span>)}</div>
+      </div>
+      <button className="walkout-cta" onClick={() => goto(0.94)}>Let’s connect <span>→</span></button>
     </section>
 
     <section className="copy copy--stadium" style={{ opacity: stadium, visibility: active === 5 ? 'visible' : 'hidden' }}>
-      <p className="eyebrow interactive-text" onClick={() => goto(0.94)}>06 / The Stadium</p>
-      <h2 className="interactive-text" role="button" tabIndex={0} onClick={() => goto(0.94)} onKeyDown={activateOnKeyboard(() => goto(0.94))}>The next point<br/>starts here.</h2>
-      <p className="interactive-text" onClick={() => goto(0.54)}>Open to interesting problems, creative collaborations and opportunities to build something meaningful.</p>
+      <p className="eyebrow">06 / CONTACT</p>
+      <h2>Let’s make<br/>something useful.</h2>
+      <p>If you’re working on an interesting problem, exploring a product idea, or looking for a collaborator at the intersection of data and design, I’d love to hear about it.</p>
       <div className="stadium-actions">
-        <button onClick={() => goto(0.54)}>Revisit the projects <span>→</span></button>
-        <a href={portfolio.socials.email}>Get in touch ↗</a>
-      </div>
-      <div className="social-links">
-        <a href={portfolio.socials.github} target="_blank" rel="noreferrer">GitHub ↗</a>
-        <a href={portfolio.socials.linkedin} target="_blank" rel="noreferrer">LinkedIn ↗</a>
-        <a href={portfolio.socials.email}>Email ↗</a>
+        <a className="contact-primary-link" href={portfolio.socials.email}>Start a conversation <span>↗</span></a>
+        <button onClick={() => goto(0.54)}>Revisit selected work <span>→</span></button>
       </div>
     </section>
+
+    <aside className="editorial-sidecard contact-sidecard" style={{ opacity: stadium, visibility: active === 5 ? 'visible' : 'hidden' }} aria-label="Contact details">
+      <div className="sidecard-kicker">SAY HELLO</div>
+      <span className="contact-card-caption">EMAIL</span>
+      <a className="contact-email" href={portfolio.socials.email}>rugved1206@gmail.com <span>↗</span></a>
+      <div className="contact-card-rule" />
+      <span className="contact-card-caption">FIND ME ELSEWHERE</span>
+      <a className="contact-social-link" href={portfolio.socials.linkedin} target="_blank" rel="noreferrer"><span>LinkedIn</span><b>Professional updates & conversations</b><i>↗</i></a>
+      <a className="contact-social-link" href={portfolio.socials.github} target="_blank" rel="noreferrer"><span>GitHub</span><b>Projects and code</b><i>↗</i></a>
+      <div className="contact-card-footer"><span>BASED IN</span><strong>{portfolio.location}</strong></div>
+    </aside>
 
     {active === 3 && !selectedProject && (
       <aside className={`locker-explore-panel ${exploreMode ? 'is-exploring' : ''}`} aria-label="Locker room exploration controls">
