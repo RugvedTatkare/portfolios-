@@ -26,6 +26,239 @@ function Concrete({color="#8d8a80",roughness=.8,repeat=1}:{color?:string;roughne
   return <meshStandardMaterial color={color} roughness={roughness} bumpMap={bump} bumpScale={.035}/>;
 }
 
+
+/**
+ * Finish packages for the clubhouse are deliberately architectural rather than
+ * decorative clutter: dark oak wainscoting, warm brass reveals, limestone
+ * insets, and a restrained terrazzo runner give the walk a premium club feel.
+ */
+function CorridorInteriorFinishes() {
+  const panels = Array.from({ length: 9 }, (_, i) => 4.2 - i * 7.1);
+  const slats = Array.from({ length: 47 }, (_, i) => 3.4 - i * 1.23);
+  const floorJoints = Array.from({ length: 14 }, (_, i) => 1.8 - i * 4.15);
+  const ceilingRibs = Array.from({ length: 8 }, (_, i) => 1.5 - i * 7.4);
+  return (
+    <group>
+      {/* A bespoke stone-and-green terrazzo floor with fine brass datum lines. */}
+      <mesh position={[0, 0.025, -25]}>
+        <boxGeometry args={[4.55, 0.035, 57.5]} />
+        <meshStandardMaterial color="#344b3e" roughness={0.38} metalness={0.08} />
+      </mesh>
+      {[-1, 1].map((side) => (
+        <mesh key={side} position={[side * 3.63, 0.019, -25]}>
+          <boxGeometry args={[2.35, 0.03, 57.5]} />
+          <meshStandardMaterial color="#b7b5a8" roughness={0.68} metalness={0.02} />
+        </mesh>
+      ))}
+      {[-4.78, -2.34, 2.34, 4.78].map((x) => (
+        <mesh key={x} position={[x, 0.047, -25]}>
+          <boxGeometry args={[0.035, 0.018, 57.5]} />
+          <meshStandardMaterial color="#b99b62" metalness={0.72} roughness={0.28} />
+        </mesh>
+      ))}
+      {floorJoints.map((z, i) => (
+        <mesh key={z} position={[0, 0.047, z]}>
+          <boxGeometry args={[9.48, 0.012, 0.022]} />
+          <meshBasicMaterial color={i % 2 ? "#8b8b79" : "#96886d"} />
+        </mesh>
+      ))}
+
+      {/* Repeated framed wall bays, deep green lower panels and pale stone above. */}
+      {panels.map((z, i) => (
+        <group key={z}>
+          {([-1, 1] as const).map((side) => (
+            <group key={side}>
+              <mesh position={[side * 4.98, 1.45, z]}>
+                <boxGeometry args={[0.075, 1.58, 6.42]} />
+                <meshStandardMaterial color={i % 2 ? "#304b3e" : "#243f34"} roughness={0.58} metalness={0.08} />
+              </mesh>
+              <mesh position={[side * 4.975, 3.48, z]}>
+                <boxGeometry args={[0.065, 2.36, 6.42]} />
+                <meshStandardMaterial color={i % 2 ? "#777e70" : "#858779"} roughness={0.86} />
+              </mesh>
+              {[-3.13, 3.13].map((offset) => (
+                <mesh key={offset} position={[side * 4.91, 2.8, z + offset]}>
+                  <boxGeometry args={[0.045, 4.45, 0.055]} />
+                  <meshStandardMaterial color="#b99b62" metalness={0.68} roughness={0.3} />
+                </mesh>
+              ))}
+              {[0.62, 2.3, 4.72].map((y) => (
+                <mesh key={y} position={[side * 4.91, y, z]}>
+                  <boxGeometry args={[0.045, 0.035, 6.42]} />
+                  <meshStandardMaterial color="#c0a36b" metalness={0.64} roughness={0.3} />
+                </mesh>
+              ))}
+            </group>
+          ))}
+        </group>
+      ))}
+
+      {/* Fine timber battens add rhythm and real depth to the side walls. */}
+      {slats.map((z, i) => (
+        <group key={z}>
+          {([-1, 1] as const).map((side) => (
+            <mesh key={side} position={[side * 4.925, 3.0, z]}>
+              <boxGeometry args={[0.07, 5.22, i % 3 === 0 ? 0.13 : 0.075]} />
+              <meshStandardMaterial color={i % 3 === 0 ? "#6c553d" : "#314b3d"} roughness={0.48} metalness={0.12} />
+            </mesh>
+          ))}
+        </group>
+      ))}
+
+      {/* Slim timber ceiling ribs aligned with the light wells. */}
+      {ceilingRibs.map((z, i) => (
+        <group key={z} position={[0, 5.82, z]}>
+          <mesh>
+            <boxGeometry args={[9.65, 0.105, 0.17]} />
+            <meshStandardMaterial color={i % 2 ? "#5e4a34" : "#8c7049"} roughness={0.52} metalness={0.12} />
+          </mesh>
+          <mesh position={[0, -0.075, 0]}>
+            <boxGeometry args={[6.8, 0.025, 0.06]} />
+            <meshBasicMaterial color="#f0d39b" />
+          </mesh>
+        </group>
+      ))}
+    </group>
+  );
+}
+
+function LockerRoomInteriorFinishes() {
+  const panels = Array.from({ length: 9 }, (_, i) => -56.2 - i * 6.35);
+  const floorJoints = Array.from({ length: 14 }, (_, i) => -55.6 - i * 4.0);
+  const ceilingSlats = [-10.25, -8.35, -6.45, -4.55, 4.55, 6.45, 8.35, 10.25];
+  return (
+    <group>
+      {/* Custom inset-floor composition: a dark runner, stone side tiles and brass seams. */}
+      <mesh position={[0, 0.026, -81.5]}>
+        <boxGeometry args={[5.95, 0.04, 55.9]} />
+        <meshStandardMaterial color="#324a3d" roughness={0.4} metalness={0.08} />
+      </mesh>
+      {[-1, 1].map((side) => (
+        <mesh key={side} position={[side * 7.9, 0.018, -81.5]}>
+          <boxGeometry args={[7.45, 0.028, 55.9]} />
+          <meshStandardMaterial color={side < 0 ? "#a5a28f" : "#b8b29f"} roughness={0.72} />
+        </mesh>
+      ))}
+      {[-10.55, -3.02, 3.02, 10.55].map((x) => (
+        <mesh key={x} position={[x, 0.052, -81.5]}>
+          <boxGeometry args={[0.04, 0.018, 55.9]} />
+          <meshStandardMaterial color="#bd9d5f" metalness={0.72} roughness={0.27} />
+        </mesh>
+      ))}
+      {floorJoints.map((z, i) => (
+        <mesh key={z} position={[0, 0.052, z]}>
+          <boxGeometry args={[23.1, 0.012, 0.025]} />
+          <meshBasicMaterial color={i % 2 ? "#777b6b" : "#95886d"} />
+        </mesh>
+      ))}
+
+      {/* Wall panels sit behind the sports lockers and frame the project boards as exhibits. */}
+      {panels.map((z, i) => (
+        <group key={z}>
+          {([-1, 1] as const).map((side) => (
+            <group key={side}>
+              <mesh position={[side * 11.82, 3.2, z]}>
+                <boxGeometry args={[0.075, 5.82, 6.0]} />
+                <meshStandardMaterial color={i % 2 ? "#596355" : "#777967"} roughness={0.76} />
+              </mesh>
+              <mesh position={[side * 11.775, 1.26, z]}>
+                <boxGeometry args={[0.045, 1.82, 5.72]} />
+                <meshStandardMaterial color={i % 2 ? "#263e33" : "#304b3e"} roughness={0.54} metalness={0.12} />
+              </mesh>
+              {[-2.92, 2.92].map((offset) => (
+                <mesh key={offset} position={[side * 11.72, 3.1, z + offset]}>
+                  <boxGeometry args={[0.035, 5.48, 0.055]} />
+                  <meshStandardMaterial color="#ba9a5f" metalness={0.7} roughness={0.3} />
+                </mesh>
+              ))}
+              {[0.34, 2.22, 5.95].map((y) => (
+                <mesh key={y} position={[side * 11.72, y, z]}>
+                  <boxGeometry args={[0.035, 0.035, 5.98]} />
+                  <meshStandardMaterial color="#b99a60" metalness={0.7} roughness={0.3} />
+                </mesh>
+              ))}
+            </group>
+          ))}
+        </group>
+      ))}
+
+      {/* Ribbed timber ceiling edges leave the central skylight panels open. */}
+      {ceilingSlats.map((x, i) => (
+        <group key={x} position={[x, 6.54, -81.5]}>
+          <mesh>
+            <boxGeometry args={[0.11, 0.12, 55.2]} />
+            <meshStandardMaterial color={i % 2 ? "#6b543c" : "#8c704b"} roughness={0.5} metalness={0.12} />
+          </mesh>
+          <mesh position={[0, -0.075, 0]}>
+            <boxGeometry args={[0.025, 0.018, 55.2]} />
+            <meshBasicMaterial color="#e8c789" />
+          </mesh>
+        </group>
+      ))}
+
+      {/* Small illuminated plaques bring the room's repeated bays together. */}
+      {[-59.2, -71.4, -83.6, -95.8, -105.8].map((z, i) => (
+        <group key={z} position={[0, 5.86, z]}>
+          <mesh>
+            <boxGeometry args={[3.3, 0.07, 0.18]} />
+            <meshStandardMaterial color="#b99a60" metalness={0.68} roughness={0.28} />
+          </mesh>
+          <mesh position={[0, -0.14, 0]}>
+            <boxGeometry args={[2.6, 0.025, 0.09]} />
+            <meshBasicMaterial color={i % 2 ? "#d4d4bf" : "#a8d0c4"} />
+          </mesh>
+        </group>
+      ))}
+    </group>
+  );
+}
+
+function TunnelInteriorFinishes() {
+  const bays = [-114.5, -121.5, -128.5, -135];
+  return (
+    <group>
+      <mesh position={[0, 0.04, -123.3]}>
+        <boxGeometry args={[5.25, 0.035, 29.4]} />
+        <meshStandardMaterial color="#253d32" roughness={0.38} metalness={0.12} />
+      </mesh>
+      {[-2.72, 2.72, -6.05, 6.05].map((x) => (
+        <mesh key={x} position={[x, 0.067, -123.3]}>
+          <boxGeometry args={[0.035, 0.018, 29.5]} />
+          <meshStandardMaterial color="#c2a36b" metalness={0.72} roughness={0.26} />
+        </mesh>
+      ))}
+      {bays.map((z, i) => (
+        <group key={z}>
+          {([-1, 1] as const).map((side) => (
+            <group key={side}>
+              <mesh position={[side * 6.47, 2.35, z]}>
+                <boxGeometry args={[0.055, 2.85, 5.35]} />
+                <meshStandardMaterial color={i % 2 ? "#344b3d" : "#273e33"} roughness={0.54} metalness={0.12} />
+              </mesh>
+              <mesh position={[side * 6.42, 2.36, z - 2.61]}>
+                <boxGeometry args={[0.04, 4.25, 0.055]} />
+                <meshStandardMaterial color="#b99a60" metalness={0.7} roughness={0.28} />
+              </mesh>
+              <mesh position={[side * 6.42, 2.36, z + 2.61]}>
+                <boxGeometry args={[0.04, 4.25, 0.055]} />
+                <meshStandardMaterial color="#b99a60" metalness={0.7} roughness={0.28} />
+              </mesh>
+              <mesh position={[side * 6.42, 0.85, z]}>
+                <boxGeometry args={[0.04, 0.035, 5.3]} />
+                <meshStandardMaterial color="#d4b477" metalness={0.68} roughness={0.3} />
+              </mesh>
+            </group>
+          ))}
+        </group>
+      ))}
+      <mesh position={[0, 5.95, -136.02]}>
+        <boxGeometry args={[4.4, 0.035, 0.025]} />
+        <meshBasicMaterial color="#d6b77a" />
+      </mesh>
+    </group>
+  );
+}
+
 function Planter({position,scale=1}:{position:[number,number,number];scale?:number}){
   const leaves=useMemo(()=>Array.from({length:7},(_,i)=>({r:i*.7, a:i/7*Math.PI*2})),[]);
   return <group position={position} scale={scale}>
