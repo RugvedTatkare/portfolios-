@@ -207,6 +207,12 @@ function LockerRoomInteriorFinishes() {
             <boxGeometry args={[2.6, 0.025, 0.09]} />
             <meshBasicMaterial color={i % 2 ? "#d4d4bf" : "#a8d0c4"} />
           </mesh>
+          {[-1.43, 1.43].map((x) => (
+            <mesh key={x} position={[x, 0.39, 0]}>
+              <boxGeometry args={[0.025, 0.78, 0.025]} />
+              <meshStandardMaterial color="#b99a60" metalness={0.72} roughness={0.28} />
+            </mesh>
+          ))}
           <Text position={[0, -0.15, 0.095]} anchorX="center" fontSize={0.085} color="#244536" letterSpacing={0.11}>
             {['ANALYSE / DESIGN', 'SOLVE / BUILD', 'TEST / REFINE', 'PLAY THE LONG GAME', 'COURT 01'][i]}
           </Text>
@@ -1124,10 +1130,16 @@ function Stadium({ matchPlaying, tennisGameActive, tennisHitSignal, tennisScore,
         return (
           <group key={row}>
             {[-1, 1].map((side) => (
-              <mesh key={side} position={[side * (offset + 0.66), y, -1.6]} receiveShadow>
-                <boxGeometry args={[2.8, 0.2, 54]} />
-                <meshStandardMaterial color={row % 2 ? '#315c48' : '#3d6d55'} roughness={0.86} />
-              </mesh>
+              <group key={side}>
+                <mesh position={[side * (offset + 0.66), y, -1.6]} receiveShadow>
+                  <boxGeometry args={[2.8, 0.2, 54]} />
+                  <meshStandardMaterial color={row % 2 ? '#315c48' : '#3d6d55'} roughness={0.86} />
+                </mesh>
+                <mesh position={[side * (offset + 1.99), y + 0.115, -1.6]}>
+                  <boxGeometry args={[0.035, 0.025, 54]} />
+                  <meshStandardMaterial color="#b5a06d" metalness={0.6} roughness={0.32} />
+                </mesh>
+              </group>
             ))}
             <mesh position={[0, y, -endOffset]} receiveShadow>
               <boxGeometry args={[42, 0.2, 2.5]} />
@@ -1199,6 +1211,25 @@ function Stadium({ matchPlaying, tennisGameActive, tennisHitSignal, tennisScore,
           <meshStandardMaterial color="#164e3d" roughness={0.82} />
         </mesh>
       ))}
+      {/* Branded courtside enamel panels break up the long perimeter walls. */}
+      {([-1, 1] as const).map((side) => [-22, -11, 0, 11, 22].map((z, i) => (
+        <group key={`${side}-${z}`} position={[side * 20.04, 1.05, z]} rotation={[0, side === 1 ? -Math.PI / 2 : Math.PI / 2, 0]}>
+          <mesh>
+            <boxGeometry args={[4.7, 1.18, 0.12]} />
+            <meshStandardMaterial color="#b99a60" metalness={0.62} roughness={0.3} />
+          </mesh>
+          <mesh position={[0, 0, 0.072]}>
+            <boxGeometry args={[4.52, 1.0, 0.04]} />
+            <meshStandardMaterial color={i % 2 ? "#243f32" : "#1d382d"} roughness={0.64} />
+          </mesh>
+          <Text position={[0, 0.13, 0.096]} anchorX="center" fontSize={0.16} color="#f0eadb" letterSpacing={0.1}>
+            {i % 2 ? 'PLAY THE LONG GAME' : 'RUGVED / CLUB'}
+          </Text>
+          <Text position={[0, -0.24, 0.096]} anchorX="center" fontSize={0.065} color="#d4bc85" letterSpacing={0.16}>
+            COURT 01  /  GRASS SERIES
+          </Text>
+        </group>
+      )))}
       <mesh position={[0, 0.95, -29.5]} receiveShadow>
         <boxGeometry args={[42, 1.8, 0.35]} />
         <meshStandardMaterial color="#174d3b" roughness={0.82} />
