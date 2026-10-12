@@ -441,12 +441,19 @@ function Skylight({z}:{z:number}){
 }
 
 function WallArt({side,z,title,sub}:{side:-1|1;z:number;title:string;sub:string}){
-  return <group position={[side*4.91,2.55,z]} rotation={[0,side*Math.PI/2,0]}>
-    <mesh position={[0,0,-.03]}><boxGeometry args={[2.5,3.5,.08]}/><meshStandardMaterial color="#151713" roughness={.8}/></mesh>
-    <mesh position={[0,0,.02]}><planeGeometry args={[2.25,3.25]}/><meshStandardMaterial color="#252721" roughness={.72}/></mesh>
-    <Text position={[-.9,1.15,.08]} anchorX="left" fontSize={.17} maxWidth={1.7} color="#e7e1d3" letterSpacing={.02}>{title}</Text>
-    <Text position={[-.9,.72,.08]} anchorX="left" fontSize={.09} maxWidth={1.7} color="#a8a49a" lineHeight={1.35}>{sub}</Text>
-    <mesh position={[-.9,-.9,.08]}><planeGeometry args={[.95,.02]}/><meshBasicMaterial color="#c7a46b"/></mesh>
+  return <group position={[side*4.91,2.55,z]} rotation={[0,side === 1 ? -Math.PI/2 : Math.PI/2,0]}>
+    {/* A framed editorial panel with court-line artwork and a warm edge reveal. */}
+    <mesh position={[0,0,-.07]}><boxGeometry args={[2.72,3.78,.16]}/><meshStandardMaterial color="#b59a67" metalness={.58} roughness={.34}/></mesh>
+    <mesh position={[0,0,-.015]}><boxGeometry args={[2.58,3.64,.12]}/><meshStandardMaterial color="#182b24" roughness={.68}/></mesh>
+    <mesh position={[0,0,.052]}><planeGeometry args={[2.42,3.48]}/><meshStandardMaterial color="#293e32" roughness={.72}/></mesh>
+    <mesh position={[0,-.3,.061]}><planeGeometry args={[1.68,1.32]}/><meshBasicMaterial color="#334d3e"/></mesh>
+    {[-.76,0,.76].map((x)=><mesh key={x} position={[x,-.3,.07]}><boxGeometry args={[.018,1.26,.012]}/><meshBasicMaterial color="#d8c79f"/></mesh>)}
+    {[-.95,-.3,.35].map((y)=><mesh key={y} position={[0,y,.071]}><boxGeometry args={[1.68,.018,.012]}/><meshBasicMaterial color="#d8c79f"/></mesh>)}
+    <mesh position={[0,-.3,.075]}><torusGeometry args={[.33,.015,5,32]}/><meshBasicMaterial color="#d5be8c"/></mesh>
+    <Text position={[-1.03,1.27,.09]} anchorX="left" fontSize={.095} maxWidth={2.0} color="#d6bc80" letterSpacing={.13}>CLUB NOTES / 0{side === 1 ? '1' : '2'}</Text>
+    <Text position={[-1.03,.92,.09]} anchorX="left" fontSize={.205} maxWidth={2.0} color="#f1eee3" letterSpacing={.015}>{title}</Text>
+    <Text position={[-1.03,-1.2,.09]} anchorX="left" fontSize={.085} maxWidth={2.05} color="#c0c9b9" lineHeight={1.35}>{sub}</Text>
+    <mesh position={[-.57,-1.48,.09]}><boxGeometry args={[.92,.025,.012]}/><meshBasicMaterial color="#c6a46b"/></mesh>
   </group>
 }
 
@@ -659,6 +666,7 @@ function LockerRoom({ onSelectProject }: { onSelectProject: (number: string) => 
         <boxGeometry args={[8.7, 0.14, 58]} />
         <meshStandardMaterial color="#b8d3d7" metalness={0.06} roughness={0.3} transparent opacity={0.56} />
       </mesh>
+      <LockerRoomInteriorFinishes />
       {sidePositions.map((z, i) => (
         <group key={z}>
           {/* These three positions are reserved for project-filled sports lockers. */}
@@ -748,6 +756,7 @@ function ApproachTunnel() {
         <boxGeometry args={[4.2, 0.18, 31]} />
         <Concrete color="#363831" roughness={0.82} />
       </mesh>
+      <TunnelInteriorFinishes />
       <mesh position={[0, 6.5, -136.4]}>
         <boxGeometry args={[13.2, 0.5, 0.65]} />
         <meshStandardMaterial color="#6f6b60" metalness={0.4} roughness={0.38} />
@@ -1442,6 +1451,7 @@ export function Scene({ progress, onSelectProject, matchPlaying, exploreMode, te
     <mesh position={[-5.15,3,-25]} receiveShadow><boxGeometry args={[.28,6.1,65]}/><Concrete color="#a8aaa0" roughness={.78} repeat={3}/></mesh>
     <mesh position={[5.15,3,-25]} receiveShadow><boxGeometry args={[.28,6.1,65]}/><Concrete color="#a8aaa0" roughness={.78} repeat={3}/></mesh>
     <mesh position={[0,6.05,-25]}><boxGeometry args={[10.4,.22,65]}/><Concrete color="#c2c7bf" roughness={.84} repeat={4}/></mesh>
+    <CorridorInteriorFinishes />
     {bays.map((z,i)=><group key={z}>
       <mesh position={[-4.65,3,z]} castShadow><boxGeometry args={[.52,6.1,.52]}/><Concrete color="#7b786f" roughness={.76} repeat={2}/></mesh>
       <mesh position={[4.65,3,z]} castShadow><boxGeometry args={[.52,6.1,.52]}/><Concrete color="#7b786f" roughness={.76} repeat={2}/></mesh>
