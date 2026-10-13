@@ -213,7 +213,7 @@ function LockerRoomInteriorFinishes() {
               <meshStandardMaterial color="#b99a60" metalness={0.72} roughness={0.28} />
             </mesh>
           ))}
-          <Text position={[0, -0.15, 0.095]} anchorX="center" fontSize={0.085} color="#244536" letterSpacing={0.11}>
+          <Text position={[0, -0.15, 0.095]} anchorX="center" fontSize={0.105} color="#173b2b" letterSpacing={0.075} outlineWidth={0.002} outlineColor="#edf2df">
             {['ANALYSE / DESIGN', 'SOLVE / BUILD', 'TEST / REFINE', 'PLAY THE LONG GAME', 'COURT 01'][i]}
           </Text>
         </group>
@@ -409,26 +409,26 @@ function ClubWayfindingSign({ side, z }: { side: -1 | 1; z: number }) {
         <boxGeometry args={[2.6, 2.35, 0.035]} />
         <meshStandardMaterial color="#e6e8d9" roughness={0.74} />
       </mesh>
-      <Text position={[-1.13, 0.79, 0.125]} anchorX="left" fontSize={0.115} color="#315c47" letterSpacing={0.08}>
+      <Text position={[-1.13, 0.82, 0.125]} anchorX="left" fontSize={0.145} color="#315c47" letterSpacing={0.075} outlineWidth={0.0015} outlineColor="#e6e8d9">
         CLUBHOUSE / 01
       </Text>
-      <Text position={[-1.13, 0.36, 0.125]} anchorX="left" fontSize={0.23} color="#1d4635" letterSpacing={0.015}>
+      <Text position={[-1.13, 0.36, 0.125]} anchorX="left" fontSize={0.285} color="#173c2b" letterSpacing={0.012} outlineWidth={0.0015} outlineColor="#e6e8d9">
         COURT GUIDE
       </Text>
-      <mesh position={[0, 0.1, 0.13]}>
+      <mesh position={[0, 0.075, 0.13]}>
         <boxGeometry args={[2.2, 0.018, 0.012]} />
         <meshBasicMaterial color="#b7a16f" />
       </mesh>
-      <Text position={[-1.13, -0.2, 0.125]} anchorX="left" fontSize={0.092} color="#42644f" lineHeight={1.3} maxWidth={2.25}>
+      <Text position={[-1.13, -0.22, 0.125]} anchorX="left" fontSize={0.108} color="#315844" lineHeight={1.25} maxWidth={2.25} outlineWidth={0.001} outlineColor="#e6e8d9">
         01  Explore the lobby
       </Text>
-      <Text position={[-1.13, -0.49, 0.125]} anchorX="left" fontSize={0.092} color="#42644f" lineHeight={1.3} maxWidth={2.25}>
+      <Text position={[-1.13, -0.53, 0.125]} anchorX="left" fontSize={0.108} color="#315844" lineHeight={1.25} maxWidth={2.25} outlineWidth={0.001} outlineColor="#e6e8d9">
         02  Open a project locker
       </Text>
-      <Text position={[-1.13, -0.78, 0.125]} anchorX="left" fontSize={0.092} color="#42644f" lineHeight={1.3} maxWidth={2.25}>
+      <Text position={[-1.13, -0.84, 0.125]} anchorX="left" fontSize={0.108} color="#315844" lineHeight={1.25} maxWidth={2.25} outlineWidth={0.001} outlineColor="#e6e8d9">
         03  Enter the grass court
       </Text>
-      <Text position={[-1.13, -1.07, 0.125]} anchorX="left" fontSize={0.082} color="#798b7b" letterSpacing={0.04}>
+      <Text position={[-1.13, -1.045, 0.125]} anchorX="left" fontSize={0.088} color="#526d5c" letterSpacing={0.035} outlineWidth={0.001} outlineColor="#e6e8d9">
         CURIOSITY IS THE FIRST MOVE
       </Text>
     </group>
@@ -459,9 +459,9 @@ function WallArt({side,z,title,sub}:{side:-1|1;z:number;title:string;sub:string}
     {[-.76,0,.76].map((x)=><mesh key={x} position={[x,-.3,.07]}><boxGeometry args={[.018,1.26,.012]}/><meshBasicMaterial color="#d8c79f"/></mesh>)}
     {[-.95,-.3,.35].map((y)=><mesh key={y} position={[0,y,.071]}><boxGeometry args={[1.68,.018,.012]}/><meshBasicMaterial color="#d8c79f"/></mesh>)}
     <mesh position={[0,-.3,.075]}><torusGeometry args={[.33,.015,5,32]}/><meshBasicMaterial color="#d5be8c"/></mesh>
-    <Text position={[-1.03,1.27,.09]} anchorX="left" fontSize={.095} maxWidth={2.0} color="#d6bc80" letterSpacing={.13}>CLUB NOTES / 0{side === 1 ? '1' : '2'}</Text>
-    <Text position={[-1.03,.92,.09]} anchorX="left" fontSize={.205} maxWidth={2.0} color="#f1eee3" letterSpacing={.015}>{title}</Text>
-    <Text position={[-1.03,-1.2,.09]} anchorX="left" fontSize={.085} maxWidth={2.05} color="#c0c9b9" lineHeight={1.35}>{sub}</Text>
+    <Text position={[-1.03,1.3,.09]} anchorX="left" fontSize={.115} maxWidth={2.0} color="#e3c98a" letterSpacing={.105} outlineWidth={.0015} outlineColor="#182b24">CLUB NOTES / 0{side === 1 ? '1' : '2'}</Text>
+    <Text position={[-1.03,.91,.09]} anchorX="left" fontSize={.265} maxWidth={2.0} color="#fff9e9" letterSpacing={.012} outlineWidth={.002} outlineColor="#182b24">{title}</Text>
+    <Text position={[-1.03,-1.23,.09]} anchorX="left" fontSize={.108} maxWidth={2.05} color="#e0e8d7" lineHeight={1.35} outlineWidth={.0015} outlineColor="#182b24">{sub}</Text>
     <mesh position={[-.57,-1.48,.09]}><boxGeometry args={[.92,.025,.012]}/><meshBasicMaterial color="#c6a46b"/></mesh>
   </group>
 }
