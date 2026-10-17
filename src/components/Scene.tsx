@@ -437,15 +437,17 @@ function ClubWayfindingSign({ side, z }: { side: -1 | 1; z: number }) {
 
 function WallLight({x,z,side=1}:{x:number;z:number;side?:number}){
   return <group position={[x,2.7,z]}>
-    <mesh position={[side*.08,0,0]}><boxGeometry args={[.055,4.2,.055]}/><meshBasicMaterial color="#e8c889"/></mesh>
-    <pointLight position={[side*.15,0,0]} intensity={1.7} distance={5} color="#e8c889"/>
+    <mesh position={[side*.08,0,0]}><boxGeometry args={[.055,4.2,.055]}/><meshBasicMaterial color="#f2d6a2"/></mesh>
+    <pointLight position={[side*.15,0,0]} intensity={1.45} distance={6.2} color="#f2d6a2"/>
   </group>
 }
 
 function Skylight({z}:{z:number}){
   return <group position={[0,5.9,z]}>
     <mesh><boxGeometry args={[4.8,.12,3.6]}/><meshBasicMaterial color="#d9e2e4"/></mesh>
-    <mesh position={[0,.08,0]}><boxGeometry args={[4.2,.03,3]}/><meshBasicMaterial color="#bcd0d5" transparent opacity={.45}/></mesh>
+    <mesh position={[0,.08,0]}><boxGeometry args={[4.2,.03,3]}/><meshBasicMaterial color="#c8e8f4" transparent opacity={.58}/></mesh>
+    {/* Soft cool daylight spills down from the skylight instead of leaving the floor flat. */}
+    <pointLight position={[0,-.38,0]} intensity={1.05} distance={13} color="#dcedf6" />
   </group>
 }
 
@@ -746,8 +748,8 @@ function LockerRoom({ onSelectProject }: { onSelectProject: (number: string) => 
       <Text position={[0, 4.85, -107.66]} fontSize={0.105} color="#e2e9dd" letterSpacing={0.04}>
         THROUGH THE TUNNEL / TO THE COURT
       </Text>
-      <pointLight position={[0, 5.7, -76]} intensity={2.2} distance={28} color="#e8f4ff" />
-      <pointLight position={[0, 5.7, -101]} intensity={1.8} distance={20} color="#e8f4ff" />
+      <pointLight position={[0, 5.7, -76]} intensity={1.8} distance={31} color="#d7edfa" />
+      <pointLight position={[0, 5.7, -101]} intensity={1.55} distance={24} color="#d7edfa" />
     </group>
   );
 }
@@ -796,7 +798,7 @@ function ApproachTunnel() {
       <Text position={[0, 5.72, -136.05]} fontSize={0.31} color="#f0e5d0" letterSpacing={0.16}>
         COURT 01
       </Text>
-      <pointLight position={[0, 4.7, -131]} intensity={4.3} distance={26} color="#f7d39c" />
+      <pointLight position={[0, 4.7, -131]} intensity={3.4} distance={28} color="#f4c98e" />
     </group>
   );
 }
@@ -1267,7 +1269,7 @@ function Stadium({ matchPlaying, tennisGameActive, tennisHitSignal, tennisScore,
         <sphereGeometry args={[0.19, 20, 20]} />
         <meshStandardMaterial color="#e4ed6a" roughness={0.42} emissive="#656d1d" emissiveIntensity={0.13} />
       </mesh>
-      <pointLight position={[0, 12, -22]} intensity={1.8} distance={54} color="#fff2d5" />
+      <pointLight position={[0, 12, -22]} intensity={2.15} distance={48} color="#fff0d4" />
     </group>
   );
 }
@@ -1490,14 +1492,33 @@ export function Scene({ progress, onSelectProject, matchPlaying, exploreMode, te
   const bays=Array.from({length:7},(_,i)=>-i*8-5);
   return <>
     <color attach="background" args={['#afd8ef']}/>
-    <fog attach="fog" args={['#b7d7e2',82,245]}/>
-    <Sky distance={450000} sunPosition={[70, 92, 35]} turbidity={6.5} rayleigh={2.4} mieCoefficient={0.004} mieDirectionalG={0.82}/>
-    <hemisphereLight args={["#c9eaff", "#879679", 1.65]}/>
-    <ambientLight intensity={0.9} color="#f0f4e9"/>
-    <directionalLight position={[-28, 48, 15]} intensity={3.4} color="#fff4dc" castShadow shadow-mapSize={[2048,2048]} shadow-bias={-0.0002}/>
-    <directionalLight position={[14, 28, -165]} intensity={1.8} color="#e1f2ff"/>
-    <pointLight position={[0,4,-22]} intensity={1.1} distance={18} color="#fff3da"/>
-    <pointLight position={[0,4,-43]} intensity={0.9} distance={18} color="#e6f4fa"/>
+    <fog attach="fog" args={['#b9ccd2',88,265]}/>
+    <Sky distance={450000} sunPosition={[42, 76, 26]} turbidity={4.8} rayleigh={2.15} mieCoefficient={0.0032} mieDirectionalG={0.76}/>
+    {/* Layered daylight: softer neutral fill, a warm directional key, and a restrained cool rim. */}
+    <hemisphereLight args={["#d9edfb", "#4f5d49", 1.18]}/>
+    <ambientLight intensity={0.58} color="#f1f0e4"/>
+    <directionalLight
+      position={[-24, 42, 18]}
+      intensity={2.7}
+      color="#fff0d5"
+      castShadow
+      shadow-mapSize={[2048, 2048]}
+      shadow-bias={-0.00015}
+      shadow-camera-left={-24}
+      shadow-camera-right={24}
+      shadow-camera-top={20}
+      shadow-camera-bottom={-16}
+      shadow-camera-near={1}
+      shadow-camera-far={250}
+      shadow-radius={4}
+    />
+    <directionalLight position={[14, 26, -150]} intensity={1.15} color="#cfe8f8"/>
+    {/* Warm pools down the corridor add depth while cooler skylight fill keeps stone details clear. */}
+    <pointLight position={[0,4.6,-13]} intensity={0.85} distance={15} color="#ffe1b3"/>
+    <pointLight position={[0,4.6,-32]} intensity={0.9} distance={15} color="#ffe5c0"/>
+    <pointLight position={[0,4.6,-51]} intensity={0.75} distance={14} color="#dcecf7"/>
+    <pointLight position={[0,4,-22]} intensity={1.0} distance={18} color="#fff1d8"/>
+    <pointLight position={[0,4,-43]} intensity={0.85} distance={18} color="#dcedf7"/>
     <mesh position={[0,-.16,-25]} receiveShadow><boxGeometry args={[10.2,.32,65]}/><Concrete color="#85897f" roughness={.62} repeat={5}/></mesh>
     <mesh position={[-5.15,3,-25]} receiveShadow><boxGeometry args={[.28,6.1,65]}/><Concrete color="#a8aaa0" roughness={.78} repeat={3}/></mesh>
     <mesh position={[5.15,3,-25]} receiveShadow><boxGeometry args={[.28,6.1,65]}/><Concrete color="#a8aaa0" roughness={.78} repeat={3}/></mesh>
@@ -1530,6 +1551,6 @@ export function Scene({ progress, onSelectProject, matchPlaying, exploreMode, te
       onTennisPoint={onTennisPoint}
     />
     <Sparkles count={34} scale={[9,6,125]} position={[0,4,-72]} size={0.9} speed={0.1} opacity={0.11}/>
-    <Environment preset="dawn" environmentIntensity={0.58} background={false}/>
+    <Environment preset="dawn" environmentIntensity={0.72} background={false}/>
   </>;
 }
