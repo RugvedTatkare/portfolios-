@@ -1759,3 +1759,328 @@ button:active, .topbar nav a:active { transform: scale(.985); }
 @media (prefers-reduced-motion: reduce) {
   .editorial-sidecard, .project-card, .contact-primary-link { transition: none !important; }
 }
+
+
+/* Readability pass based on the supplied portfolio reference */
+@media (min-width: 761px) {
+  .topbar {
+    width: min(1200px, calc(100vw - 56px));
+    min-height: 70px;
+    padding-inline: 15px;
+    gap: clamp(14px, 1.35vw, 24px);
+  }
+  .topbar nav {
+    gap: clamp(5px, .65vw, 11px);
+  }
+  .topbar nav a {
+    padding-inline: 10px;
+    font-size: 10.5px;
+  }
+  .topbar-meta {
+    gap: 17px;
+    font-size: 9.5px;
+    letter-spacing: .09em;
+  }
+  .topbar .topbar-link {
+    font-size: 10px;
+    letter-spacing: .08em;
+  }
+  .section-rail {
+    right: 24px;
+    gap: 15px;
+    font-size: 10px;
+  }
+  .section-rail button span {
+    font-size: 9px;
+    letter-spacing: .035em;
+  }
+  .bottom-caption {
+    min-height: 58px;
+    gap: 14px;
+    padding: 13px 30px;
+    font-size: 10px;
+  }
+  .bottom-caption b { font-size: 20px; }
+  .bottom-caption em { font-size: 9px; letter-spacing: .07em; }
+}
+
+.copy .eyebrow {
+  font-size: 10px;
+  line-height: 1.6;
+  letter-spacing: .15em;
+  font-weight: 500;
+}
+.copy--hero .eyebrow {
+  font-size: 11px;
+  letter-spacing: .135em;
+  margin-bottom: 24px;
+}
+.copy--hero .hero-line {
+  font-size: 10px;
+  line-height: 1.8;
+  letter-spacing: .13em;
+}
+.copy--hero .hero-desc {
+  max-width: 500px;
+  font-size: 15px;
+  line-height: 1.78;
+  color: rgba(248, 246, 237, .94);
+  text-shadow: 0 2px 12px rgba(4, 20, 14, .72);
+}
+.copy--hero .hero-credential {
+  font-size: 10.5px;
+  line-height: 1.8;
+  color: rgba(248, 246, 237, .82);
+}
+.copy .hero-actions button {
+  min-height: 47px;
+  padding-inline: 20px;
+  font-size: 12px;
+}
+.copy .hero-actions button span { font-size: 15px; }
+
+.editorial-sidecard {
+  border-color: rgba(244, 248, 234, .55);
+  background:
+    radial-gradient(ellipse at 100% 0%, rgba(185, 211, 170, .13), transparent 46%),
+    linear-gradient(145deg, rgba(11, 42, 32, .94), rgba(8, 34, 27, .94));
+  box-shadow: 0 22px 65px rgba(3, 19, 13, .3), inset 0 1px 0 rgba(255,255,255,.19);
+}
+.sidecard-kicker {
+  font-size: 9px;
+  line-height: 1.65;
+  letter-spacing: .105em;
+  margin-bottom: 20px;
+}
+.hero-lens { padding: 16px 0; }
+.hero-lens-number { font-size: 10px; }
+.hero-lens strong, .about-quality strong {
+  font-size: 10.5px;
+  letter-spacing: .07em;
+}
+.hero-lens p, .about-quality p {
+  font-size: 12.5px;
+  line-height: 1.65;
+  color: rgba(249, 249, 241, .88);
+}
+.sidecard-footer span, .contact-card-footer span {
+  font-size: 9px;
+}
+.sidecard-footer strong, .contact-card-footer strong {
+  font-size: 10px;
+}
+.editorial-sidecard h3 {
+  font-size: clamp(30px, 2.45vw, 38px);
+  line-height: 1.02;
+}
+.about-quality { padding: 16px 0; }
+.about-interest-row > span, .toolkit-label {
+  font-size: 9px;
+  letter-spacing: .105em;
+}
+.about-interest-row p, .toolkit-block small {
+  font-size: 11.5px;
+  line-height: 1.7;
+}
+.toolkit-block { padding: 17px 0; }
+.toolkit-block p {
+  font-size: 13.5px;
+  line-height: 1.65;
+}
+
+.copy--about > p, .copy--skills > p {
+  font-size: 15px;
+  line-height: 1.82;
+  color: rgba(248, 246, 237, .92);
+}
+.fact-list > div {
+  grid-template-columns: 138px minmax(0,1fr);
+  gap: 17px;
+  padding: 14px 0;
+}
+.fact-list .fact-label {
+  font-size: 9px;
+  line-height: 1.7;
+}
+.fact-list strong {
+  font-size: 12px;
+  line-height: 1.7;
+  color: rgba(250, 248, 240, .91);
+}
+.copy--skills .skill-list button {
+  min-height: 47px;
+  font-size: 11px;
+  line-height: 1.6;
+}
+.copy--skills .skill-list button small {
+  font-size: 11.5px;
+  line-height: 1.7;
+}
+.copy--skills .skill-hint {
+  font-size: 9px !important;
+  line-height: 1.6;
+}
+
+.projects-heading h2, .experience-heading h2 {
+  text-shadow: 0 3px 22px rgba(4, 16, 12, .55);
+}
+.projects-intro, .experience-heading > p {
+  font-size: 14px !important;
+  line-height: 1.8 !important;
+  color: rgba(249, 247, 238, .94) !important;
+}
+.project-showcase-grid { gap: 17px; }
+.project-card {
+  padding: 22px 22px 17px;
+  border-color: rgba(244, 247, 233, .49);
+  background:
+    radial-gradient(ellipse at 100% 0%, rgba(204, 222, 172, .13), transparent 55%),
+    linear-gradient(150deg, rgba(9, 43, 32, .94), rgba(9, 39, 30, .92));
+}
+.project-card-top { min-height: 42px; }
+.project-card-number { font-size: 11px; }
+.project-card-type { font-size: 9px; line-height: 1.6; }
+.project-card h3 {
+  font-size: clamp(29px, 2.25vw, 36px);
+  line-height: 1.02;
+  margin-top: 17px;
+  margin-bottom: 12px;
+}
+.project-card-description {
+  font-size: 12px !important;
+  line-height: 1.72 !important;
+  color: rgba(249, 248, 239, .9) !important;
+}
+.project-card-result { padding: 14px 0; gap: 8px; }
+.project-card-result span, .project-card-footer { font-size: 8.5px; }
+.project-card-result strong {
+  font-size: 13px;
+  line-height: 1.5;
+}
+.project-card-stack { gap: 6px; padding-top: 14px; }
+.project-card-stack span {
+  padding: 5px 8px;
+  font-size: 8px;
+}
+.project-card-footer { margin-top: 17px; }
+.project-section-note {
+  font-size: 8px;
+  line-height: 1.7;
+  margin-top: 17px;
+}
+
+.experience-card {
+  padding: 23px 24px 25px;
+  border-color: rgba(244, 247, 233, .44);
+  background: linear-gradient(135deg, rgba(9, 43, 32, .91), rgba(9, 39, 30, .9));
+}
+.experience-card-meta {
+  font-size: 8.5px;
+  line-height: 1.6;
+}
+.experience-card h3 {
+  font-size: clamp(28px, 2.15vw, 34px);
+  line-height: 1.04;
+}
+.experience-organization { font-size: 10px !important; }
+.experience-description {
+  font-size: 12.5px !important;
+  line-height: 1.8 !important;
+  color: rgba(249, 248, 239, .9) !important;
+}
+.certification-heading span { font-size: 9px; }
+.certification-heading small { font-size: 10.5px; }
+.certification-list { gap: 9px; }
+.certification-list span {
+  padding: 8px 12px;
+  font-size: 9px;
+}
+.project-detail-section p {
+  font-size: 14px;
+  line-height: 1.8;
+}
+.project-detail-section ul {
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.copy--stadium > p:not(.eyebrow) {
+  font-size: 15px;
+  line-height: 1.82;
+  color: rgba(249, 247, 238, .94);
+}
+.contact-primary-link {
+  min-height: 48px;
+  padding-inline: 20px;
+  font-size: 11.5px;
+}
+.contact-email { font-size: clamp(19px, 1.8vw, 25px); }
+.contact-social-link { padding: 15px 0; }
+.contact-social-link > span { font-size: 11px; }
+.contact-social-link b { font-size: 10.5px; line-height: 1.6; }
+
+@media (max-width: 1180px) and (min-width: 761px) {
+  .copy--hero .hero-desc { font-size: 13.5px; }
+  .editorial-sidecard { padding: 18px; }
+  .hero-lens p, .about-quality p { font-size: 11px; }
+  .project-card { padding: 19px; }
+  .project-card-description { font-size: 11px !important; }
+  .project-card-stack span { font-size: 7.5px; }
+  .experience-description { font-size: 11.5px !important; }
+}
+
+@media (max-width: 760px) {
+  .copy .eyebrow { font-size: 9px; }
+  .copy--hero .eyebrow { font-size: 9px; margin-bottom: 16px; }
+  .copy--hero .hero-line {
+    font-size: 8.5px;
+    letter-spacing: .08em;
+    line-height: 1.7;
+  }
+  .copy--hero .hero-desc { font-size: 12px; line-height: 1.75; }
+  .copy--hero .hero-credential { font-size: 9px; line-height: 1.7; }
+  .copy .hero-actions button {
+    min-height: 42px;
+    padding-inline: 14px;
+    font-size: 10.5px;
+  }
+  .sidecard-kicker { font-size: 8px; }
+  .copy--about > p, .copy--skills > p {
+    font-size: 12px;
+    line-height: 1.75;
+  }
+  .fact-list > div { grid-template-columns: 85px minmax(0,1fr); gap: 9px; }
+  .fact-list .fact-label { font-size: 7.5px; }
+  .fact-list strong { font-size: 10px; line-height: 1.6; }
+  .copy--skills .skill-list button { font-size: 10px; min-height: 42px; }
+  .copy--skills .skill-list button small { font-size: 10.5px; }
+  .projects-intro, .experience-heading > p {
+    font-size: 11.5px !important;
+    line-height: 1.7 !important;
+  }
+  .project-card { min-height: 315px; padding: 18px 17px 15px; }
+  .project-card-top { min-height: 38px; }
+  .project-card-number { font-size: 10px; }
+  .project-card-type { font-size: 8px; }
+  .project-card h3 { font-size: 30px; }
+  .project-card-description { font-size: 11.5px !important; line-height: 1.7 !important; }
+  .project-card-result strong { font-size: 12px; }
+  .project-card-stack span { font-size: 8px; }
+  .project-card-footer { font-size: 8px; }
+  .project-section-note { font-size: 7px; }
+  .experience-card h3 { font-size: 28px; }
+  .experience-description { font-size: 11.5px !important; line-height: 1.75 !important; }
+  .experience-card-meta { font-size: 7.5px; }
+  .certification-heading span { font-size: 8.5px; }
+  .certification-heading small { font-size: 10px; }
+  .certification-list span { font-size: 8px; }
+  .copy--stadium > p:not(.eyebrow) { font-size: 12px; line-height: 1.75; }
+  .contact-primary-link { font-size: 10px; }
+  .bottom-caption { font-size: 7.5px; }
+}
+
+@media (max-width: 390px) {
+  .copy--hero .hero-actions { gap: 7px; }
+  .copy .hero-actions button { font-size: 9.5px; padding-inline: 11px; }
+  .project-card-description { font-size: 10.5px !important; }
+}
