@@ -3028,3 +3028,152 @@ html, body, button, input, textarea, select {
     line-height: 1.7;
   }
 }
+
+
+/* About section — grounded, readable content panel with aligned facts */
+.copy--about {
+  left: clamp(26px, 5.8vw, 82px);
+  top: 50%;
+  width: min(760px, 58vw);
+  max-height: 78vh;
+  box-sizing: border-box;
+  padding: clamp(22px, 2.3vw, 32px);
+  overflow-y: auto;
+  border: 1px solid rgba(236, 235, 215, .28);
+  border-radius: 8px;
+  background:
+    linear-gradient(115deg, rgba(7, 34, 27, .88), rgba(9, 39, 30, .78));
+  box-shadow: 0 20px 54px rgba(3, 16, 11, .16), inset 0 1px 0 rgba(255,255,255,.08);
+  -webkit-backdrop-filter: blur(13px) saturate(115%);
+  backdrop-filter: blur(13px) saturate(115%);
+  transform: translateY(-49%);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(214, 194, 139, .38) transparent;
+  text-align: left;
+}
+.copy--about .eyebrow {
+  margin: 0 0 17px;
+  color: #ddc990;
+  font: 500 9px/1.6 var(--font-label);
+  letter-spacing: .16em;
+}
+.copy--about h2 {
+  max-width: 100%;
+  margin: 0 0 19px;
+  color: #f6f1e5;
+  font: 500 clamp(43px, 4.35vw, 62px)/.98 var(--font-display);
+  letter-spacing: -.035em;
+  text-wrap: balance;
+  overflow-wrap: normal;
+}
+.copy--about > p {
+  max-width: 650px;
+  margin: 0 0 18px;
+  color: rgba(248, 246, 237, .91);
+  font: 400 13px/1.82 var(--font-body);
+  letter-spacing: 0;
+  text-wrap: pretty;
+}
+
+/* The facts are true two-column rows, not text labels with inherited underlines. */
+.copy--about .fact-list {
+  display: grid;
+  width: 100%;
+  max-width: 690px;
+  margin: 22px 0 0;
+  padding: 0;
+  border-top: 1px solid rgba(239, 240, 223, .2);
+  border-bottom: 0;
+}
+.copy--about .fact-list > div {
+  display: grid;
+  grid-template-columns: minmax(118px, 145px) minmax(0, 1fr);
+  align-items: start;
+  gap: clamp(12px, 2vw, 22px);
+  padding: 13px 0;
+  border-bottom: 1px solid rgba(239, 240, 223, .17);
+}
+.copy--about .fact-list .fact-label {
+  display: block;
+  min-width: 0;
+  margin: 2px 0 0;
+  padding: 0;
+  border: 0;
+  color: #ddc990;
+  font: 400 8px/1.75 var(--font-label);
+  letter-spacing: .075em;
+  text-transform: uppercase;
+  overflow-wrap: normal;
+}
+.copy--about .fact-list strong {
+  display: block;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  color: rgba(249, 247, 239, .93);
+  font: 400 12px/1.75 var(--font-body);
+  letter-spacing: 0;
+  overflow-wrap: anywhere;
+  text-wrap: pretty;
+}
+
+.about-sidecard {
+  width: min(365px, 29vw);
+  max-height: 75vh;
+  padding: 22px;
+}
+
+@media (min-width: 761px) and (max-width: 1180px) {
+  .copy--about {
+    left: 4vw;
+    width: min(580px, 52vw);
+    padding: 21px;
+  }
+  .copy--about h2 { font-size: clamp(42px, 4.8vw, 55px); }
+  .copy--about > p { font-size: 12px; line-height: 1.75; }
+  .copy--about .fact-list > div {
+    grid-template-columns: 116px minmax(0,1fr);
+    gap: 13px;
+    padding: 11px 0;
+  }
+  .copy--about .fact-list strong { font-size: 11px; }
+  .about-sidecard { width: 31vw; padding: 17px; }
+}
+
+@media (max-width: 760px) {
+  .copy--about {
+    left: 16px;
+    top: 13%;
+    width: calc(100vw - 32px);
+    max-height: calc(100dvh - 160px);
+    padding: 19px 17px 21px;
+    border-radius: 7px;
+    transform: none;
+  }
+  .copy--about .eyebrow { margin-bottom: 13px; font-size: 8px; }
+  .copy--about h2 {
+    margin-bottom: 16px;
+    font-size: clamp(39px, 9.3vw, 52px);
+    line-height: .99;
+  }
+  .copy--about > p {
+    margin-bottom: 15px;
+    font-size: 11.5px;
+    line-height: 1.78;
+  }
+  .copy--about .fact-list { margin-top: 17px; }
+  .copy--about .fact-list > div {
+    grid-template-columns: 91px minmax(0,1fr);
+    gap: 11px;
+    padding: 11px 0;
+  }
+  .copy--about .fact-list .fact-label {
+    font-size: 7px;
+    line-height: 1.7;
+    letter-spacing: .045em;
+  }
+  .copy--about .fact-list strong {
+    font-size: 10px;
+    line-height: 1.7;
+  }
+}
