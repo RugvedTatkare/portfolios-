@@ -2084,3 +2084,165 @@ button:active, .topbar nav a:active { transform: scale(.985); }
   .copy .hero-actions button { font-size: 9.5px; padding-inline: 11px; }
   .project-card-description { font-size: 10.5px !important; }
 }
+
+
+/* Prevent the locker-room prompt, section title, cards and navigation from colliding */
+@media (min-width: 761px) {
+  .copy--projects {
+    left: 6vw;
+    top: 194px;
+    width: 84vw;
+    max-height: calc(100dvh - 270px);
+    overflow-y: auto;
+    padding: 3px 10px 20px 0;
+  }
+  .projects-heading {
+    grid-template-columns: minmax(0, 1.05fr) minmax(300px, .82fr);
+    align-items: end;
+    gap: clamp(28px, 4vw, 64px);
+    margin-bottom: 18px;
+  }
+  .projects-heading > div { min-width: 0; }
+  .projects-heading h2 {
+    max-width: 620px;
+    font-size: clamp(49px, 4.35vw, 63px);
+    line-height: .92;
+    overflow-wrap: normal;
+  }
+  .projects-intro {
+    min-width: 0;
+    max-width: 470px;
+    margin: 0 0 4px !important;
+    font-size: 13px !important;
+    line-height: 1.72 !important;
+  }
+  .project-showcase-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    align-items: stretch;
+  }
+  .project-card {
+    min-height: 350px;
+    padding: 19px 18px 15px;
+  }
+  .project-card h3 {
+    overflow-wrap: anywhere;
+    font-size: clamp(25px, 2vw, 32px);
+    line-height: 1.04;
+  }
+  .project-card-description {
+    overflow-wrap: break-word;
+    font-size: 11px !important;
+    line-height: 1.68 !important;
+  }
+  .project-card-result strong {
+    font-size: 11.5px;
+    overflow-wrap: anywhere;
+  }
+  .project-card-stack { gap: 5px; }
+  .project-card-stack span { font-size: 7px; }
+  .project-section-note {
+    margin-top: 13px;
+    font-size: 7.5px;
+    line-height: 1.5;
+  }
+  .section-rail {
+    right: 14px;
+    gap: 14px;
+    max-width: 102px;
+  }
+  .section-rail button {
+    gap: 7px;
+    max-width: 102px;
+  }
+  .section-rail button span {
+    max-width: 78px;
+    font-size: 8px;
+    white-space: normal;
+    line-height: 1.4;
+  }
+}
+
+@media (min-width: 761px) and (max-width: 1180px) {
+  .copy--projects {
+    left: 4vw;
+    width: 88vw;
+    top: 184px;
+    max-height: calc(100dvh - 250px);
+  }
+  .projects-heading {
+    grid-template-columns: minmax(0, .95fr) minmax(250px, .9fr);
+    gap: 24px;
+  }
+  .projects-heading h2 { font-size: clamp(45px, 5.2vw, 59px); }
+  .project-card { padding: 17px 15px 14px; }
+  .project-card-type { font-size: 7.5px; }
+  .project-card-stack span { font-size: 6.5px; padding: 4px 6px; }
+  .section-rail { right: 8px; max-width: 88px; }
+  .section-rail button { max-width: 88px; gap: 5px; }
+  .section-rail button span { max-width: 65px; font-size: 7px; }
+}
+
+@media (max-width: 760px) {
+  /* Leave a clear lane under the floating nav and locker-room prompt. */
+  .copy--projects {
+    top: 164px;
+    left: 18px;
+    width: calc(100vw - 36px);
+    max-height: calc(100dvh - 235px);
+    padding: 2px 7px 22px 0;
+    overflow-y: auto;
+  }
+  .projects-heading {
+    display: grid;
+    grid-template-columns: minmax(0,1fr);
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+  .projects-heading h2 {
+    max-width: 100%;
+    font-size: clamp(40px, 10vw, 54px);
+    line-height: .93;
+    overflow-wrap: normal;
+  }
+  .projects-intro {
+    max-width: 100%;
+    margin: 0 !important;
+    font-size: 11px !important;
+    line-height: 1.65 !important;
+  }
+  .project-showcase-grid {
+    grid-template-columns: minmax(0,1fr);
+    gap: 12px;
+  }
+  .project-showcase-grid .project-card:last-child { grid-column: auto; }
+  .project-card {
+    min-height: 0;
+    padding: 17px 16px 14px;
+  }
+  .project-card h3 {
+    font-size: 28px;
+    line-height: 1.04;
+    overflow-wrap: anywhere;
+  }
+  .project-card-description {
+    font-size: 11px !important;
+    line-height: 1.65 !important;
+    overflow-wrap: anywhere;
+  }
+  .project-card-result strong { font-size: 11px; overflow-wrap: anywhere; }
+  .project-card-stack span { font-size: 7.5px; }
+  .project-section-note { font-size: 6.5px; line-height: 1.6; }
+}
+
+@media (max-width: 430px) {
+  .copy--projects {
+    top: 158px;
+    left: 14px;
+    width: calc(100vw - 28px);
+    max-height: calc(100dvh - 222px);
+  }
+  .projects-heading h2 { font-size: clamp(38px, 10.3vw, 46px); }
+  .project-card-top { grid-template-columns: 26px minmax(0,1fr) 16px; }
+  .project-card-type { font-size: 7px; line-height: 1.5; }
+}
