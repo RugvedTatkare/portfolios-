@@ -2870,3 +2870,161 @@ html, body, button, input, textarea, select {
   .project-card-top { grid-template-columns:23px minmax(0,1fr) 14px; gap:5px; }
   .project-card-type { font-size:6.5px; }
 }
+
+
+/* Skills accordion readability fix: readable sans type, compact rows, no inherited pill styling */
+.copy--skills {
+  width: min(610px, 49vw);
+}
+.copy--skills > p {
+  max-width: 555px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.8;
+  letter-spacing: 0;
+}
+.copy--skills .skill-list {
+  width: min(100%, 570px);
+  max-width: 570px;
+  display: grid;
+  gap: 9px;
+  margin-top: 20px;
+  padding-top: 0;
+  border-top: 0;
+}
+.copy--skills .skill-list button {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 24px;
+  align-items: center;
+  gap: 9px 14px;
+  width: 100%;
+  min-height: 54px;
+  margin: 0;
+  padding: 14px 16px;
+  border: 1px solid rgba(231, 239, 218, .24);
+  border-bottom: 1px solid rgba(231, 239, 218, .24);
+  border-left: 3px solid rgba(216, 194, 139, .82);
+  border-radius: 7px;
+  color: #f7f6ed;
+  background: linear-gradient(100deg, rgba(7, 31, 24, .94), rgba(15, 47, 35, .92));
+  box-shadow: 0 6px 16px rgba(0, 13, 8, .12), inset 0 1px 0 rgba(255, 255, 255, .045);
+  text-align: left;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0;
+  overflow-wrap: anywhere;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: border-color 180ms ease, background 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+}
+.copy--skills .skill-list button > span:first-child {
+  min-width: 0;
+  margin: 0;
+  color: #f7f6ed;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0;
+  overflow-wrap: anywhere;
+}
+.copy--skills .skill-list button > .skill-plus {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  margin: 0;
+  border: 1px solid rgba(224, 204, 152, .48);
+  border-radius: 50%;
+  color: #ead4a0;
+  background: rgba(234, 212, 160, .07);
+  font: 500 15px/1 var(--font-body);
+}
+.copy--skills .skill-list button:hover,
+.copy--skills .skill-list button:focus-visible {
+  padding-left: 16px;
+  color: #fffdf3;
+  border-color: rgba(232, 218, 177, .58);
+  border-left-color: #e6cd93;
+  background: linear-gradient(100deg, rgba(12, 49, 36, .98), rgba(20, 61, 44, .98));
+  box-shadow: 0 9px 23px rgba(0, 15, 8, .22), inset 0 1px 0 rgba(255,255,255,.08);
+  transform: translateY(-1px);
+}
+.copy--skills .skill-list button.is-selected {
+  padding-left: 16px;
+  border-color: rgba(232, 218, 177, .66);
+  border-left-color: #f0d99f;
+  background: linear-gradient(100deg, rgba(17, 58, 42, .98), rgba(23, 69, 49, .98));
+}
+.copy--skills .skill-list button small {
+  grid-column: 1 / -1;
+  max-width: 100%;
+  margin: 1px 0 0;
+  padding: 12px 0 1px;
+  border-top: 1px solid rgba(235, 240, 225, .16);
+  color: rgba(249, 249, 241, .9);
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.75;
+  letter-spacing: 0;
+  overflow-wrap: anywhere;
+}
+.copy--skills .skill-hint {
+  margin: 11px 0 0 !important;
+  color: rgba(249, 249, 241, .78) !important;
+  font-family: var(--font-body) !important;
+  font-size: 10px !important;
+  line-height: 1.6;
+  letter-spacing: .01em;
+}
+
+@media (min-width: 761px) {
+  .copy--skills {
+    left: clamp(28px, 6vw, 96px);
+    width: min(610px, 49vw);
+  }
+  .copy--skills .skill-list button,
+  .copy--skills .skill-list button > span:first-child {
+    font-size: 13.5px;
+  }
+}
+@media (max-width: 760px) {
+  .copy--skills {
+    left: 18px;
+    width: calc(100vw - 36px);
+  }
+  .copy--skills > p {
+    font-size: 12px;
+    line-height: 1.75;
+  }
+  .copy--skills .skill-list {
+    width: 100%;
+    max-width: none;
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .copy--skills .skill-list button {
+    min-height: 49px;
+    padding: 12px 13px;
+    grid-template-columns: minmax(0,1fr) 23px;
+    gap: 8px 10px;
+    font-size: 12px;
+    line-height: 1.45;
+  }
+  .copy--skills .skill-list button > span:first-child {
+    font-size: 12px;
+    line-height: 1.45;
+  }
+  .copy--skills .skill-list button:hover,
+  .copy--skills .skill-list button:focus-visible,
+  .copy--skills .skill-list button.is-selected {
+    padding-left: 13px;
+  }
+  .copy--skills .skill-list button small {
+    font-size: 11px;
+    line-height: 1.7;
+  }
+}
