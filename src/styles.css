@@ -3177,3 +3177,117 @@ html, body, button, input, textarea, select {
     line-height: 1.7;
   }
 }
+
+
+/* Resume update: four featured projects, expanded skills categories and coursework */
+@media (min-width: 1480px) {
+  .copy--projects {
+    width: min(1420px, calc(100vw - 220px));
+    max-height: calc(100dvh - 245px);
+  }
+  .project-showcase-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .project-card {
+    min-height: 345px;
+    padding: 17px 15px 14px;
+  }
+  .project-card h3 {
+    font-size: clamp(22px, 1.55vw, 27px);
+    line-height: 1.04;
+  }
+  .project-card-description {
+    font-size: 10px !important;
+    line-height: 1.65 !important;
+  }
+  .project-card-type { font-size: 7px; }
+  .project-card-result strong {
+    font-size: 10px;
+    line-height: 1.55;
+  }
+  .project-card-stack span { font-size: 6.5px; padding: 4px 6px; }
+  .project-card-footer { font-size: 7px; }
+}
+
+@media (min-width: 761px) and (max-width: 1479px) {
+  .copy--projects { width: min(1270px, calc(100vw - 190px)); }
+  .project-showcase-grid { grid-template-columns: repeat(3, minmax(0,1fr)); }
+}
+
+@media (max-width: 1180px) {
+  .copy--projects { width: calc(100vw - 150px); }
+  .project-showcase-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+}
+
+.copy--skills .skill-list button .skill-items {
+  display: block;
+  margin: 0 0 6px;
+  color: #e7d39d;
+  font: 600 11px/1.7 var(--font-body);
+  letter-spacing: 0;
+  overflow-wrap: anywhere;
+}
+.copy--skills .skill-list button small {
+  line-height: 1.75;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 760px) {
+  .copy--skills .skill-list button .skill-items {
+    font-size: 10.5px;
+    line-height: 1.7;
+  }
+}
+
+/* Coursework keeps academic depth visible without turning the Experience section into a text wall. */
+.coursework-strip {
+  display: grid;
+  grid-template-columns: 175px minmax(0,1fr);
+  gap: 18px;
+  margin-top: 16px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(241,247,231,.2);
+}
+.coursework-heading span {
+  display: block;
+  color: #ddc990;
+  font: 8px/1.6 var(--font-label);
+  letter-spacing: .09em;
+}
+.coursework-heading small {
+  display: block;
+  margin-top: 5px;
+  color: var(--type-muted);
+  font: 10px/1.6 var(--font-body);
+}
+.coursework-list {
+  display: grid;
+  gap: 10px;
+}
+.coursework-item {
+  padding-bottom: 9px;
+  border-bottom: 1px solid rgba(241,247,231,.12);
+}
+.coursework-item:last-child { padding-bottom: 0; border-bottom: 0; }
+.coursework-item strong {
+  display: block;
+  margin-bottom: 4px;
+  color: #f3efdf;
+  font: 600 10px/1.6 var(--font-body);
+}
+.coursework-item p {
+  margin: 0;
+  color: rgba(246,246,236,.76);
+  font: 400 10px/1.7 var(--font-body);
+  overflow-wrap: anywhere;
+}
+@media (max-width: 1180px) and (min-width: 761px) {
+  .coursework-strip { grid-template-columns: 1fr; gap: 10px; }
+}
+@media (max-width: 760px) {
+  .coursework-strip { grid-template-columns: 1fr; gap: 10px; }
+  .coursework-heading span { font-size: 8px; }
+  .coursework-heading small { font-size: 9px; }
+  .coursework-item strong { font-size: 10px; }
+  .coursework-item p { font-size: 9.5px; line-height: 1.7; }
+}
