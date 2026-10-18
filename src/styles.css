@@ -4259,3 +4259,51 @@ html, body, button, input, textarea, select {
 @media (max-width: 760px) {
   .topbar nav { display: none; }
 }
+
+
+/* Final centering fix: the glass bar and its menu must share the viewport's centre.
+   Earlier left/right overrides combined with translateX(-50%) caused the bar to slide offscreen. */
+@media (min-width: 761px) {
+  .topbar {
+    left: 50% !important;
+    right: auto !important;
+    width: min(1320px, calc(100vw - 56px)) !important;
+    max-width: calc(100vw - 56px);
+    transform: translateX(-50%) !important;
+    box-sizing: border-box;
+  }
+  .topbar nav {
+    left: 50% !important;
+    right: auto !important;
+    top: 50% !important;
+    width: max-content;
+    max-width: calc(100% - 420px);
+    margin: 0 !important;
+    transform: translate(-50%, -50%) !important;
+    justify-content: center;
+  }
+}
+@media (min-width: 761px) and (max-width: 1180px) {
+  .topbar {
+    left: 50% !important;
+    right: auto !important;
+    width: min(960px, calc(100vw - 40px)) !important;
+    max-width: calc(100vw - 40px);
+    transform: translateX(-50%) !important;
+  }
+  .topbar nav {
+    left: 50% !important;
+    max-width: calc(100% - 155px);
+    gap: clamp(9px, 1.35vw, 15px);
+    transform: translate(-50%, -50%) !important;
+  }
+}
+@media (max-width: 760px) {
+  .topbar {
+    left: 10px !important;
+    right: 10px !important;
+    width: auto !important;
+    max-width: none;
+    transform: none !important;
+  }
+}
