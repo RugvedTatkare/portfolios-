@@ -5,7 +5,7 @@ const sections = [
   ['01', 'Home', 'A clear introduction to the person behind the work.', 0],
   ['02', 'About', 'The background and perspective behind how I build.', 0.2],
   ['03', 'Skills & Approach', 'The tools and ways of thinking I bring to a problem.', 0.38],
-  ['04', 'Selected Projects', 'Case studies across security, careers and legal NLP.', 0.54],
+  ['04', 'Selected Projects', 'Case studies in security, fraud, careers and legal NLP.', 0.54],
   ['05', 'Experience', 'Leadership, collaboration and continued learning.', 0.76],
   ['06', 'Contact', 'Start a conversation about something meaningful.', 0.94],
 ] as const;
@@ -134,7 +134,7 @@ export function Overlay({ progress, selectedProject, onSelectProject, onNavigate
       <h2>Curious by nature.<br/>Purpose in the build.</h2>
       <p>{portfolio.about}</p>
       <div className="line-list fact-list">
-        <div><span className="fact-label">EDUCATION</span><strong>{portfolio.education}</strong></div>
+        <div><span className="fact-label">EDUCATION</span><strong>{portfolio.educationDetail}</strong></div>
         <div><span className="fact-label">ACADEMIC SNAPSHOT</span><strong>{portfolio.academic}</strong></div>
         <div><span className="fact-label">CURRENT FOCUS</span><strong>{portfolio.currently}</strong></div>
       </div>
@@ -163,37 +163,31 @@ export function Overlay({ progress, selectedProject, onSelectProject, onNavigate
       <h2>A toolkit built<br/>around problem-solving.</h2>
       <p>A mix of statistical thinking, machine learning, data storytelling and application development — with an ongoing interest in business and design.</p>
       <div className="line-list skill-list">
-        {[
-          ['Python · SQL · JavaScript', 'Building blocks for analysis, data processing and web experiences.'],
-          ['Machine Learning & Statistical Analysis', 'Modelling, feature engineering, evaluation and exploratory analysis.'],
-          ['Power BI · Tableau · Plotly', 'Turning data into clear dashboards and interactive visual stories.'],
-          ['React · Flask · Streamlit', 'Interfaces and APIs that make project ideas usable.'],
-          ['PostgreSQL · MySQL · Supabase', 'Data storage, queries, authentication and application backends.'],
-        ].map(([label, description]) => <button key={label} className={activeSkill === label ? 'is-selected' : ''} onClick={() => setActiveSkill(activeSkill === label ? null : label)} aria-pressed={activeSkill === label}>
-          <span>{label}</span><span className="skill-plus">{activeSkill === label ? '−' : '+'}</span>
-          {activeSkill === label && <small>{description}</small>}
+        {portfolio.skillGroups.map((group) => <button key={group.label} className={activeSkill === group.label ? 'is-selected' : ''} onClick={() => setActiveSkill(activeSkill === group.label ? null : group.label)} aria-pressed={activeSkill === group.label}>
+          <span>{group.label}</span><span className="skill-plus">{activeSkill === group.label ? '−' : '+'}</span>
+          {activeSkill === group.label && <small><strong className="skill-items">{group.items}</strong><br />{group.description}</small>}
         </button>)}
       </div>
       <p className="skill-hint">{activeSkill ? 'Toolkit detail opened · Click again to collapse.' : 'Select any toolkit row to explore it.'}</p>
     </section>
 
     <aside className="editorial-sidecard skills-sidecard" style={{ opacity: skills, visibility: active === 2 ? 'visible' : 'hidden' }} aria-label="Creative and collaboration toolkit">
-      <div className="sidecard-kicker">THE SECOND TOOLKIT</div>
-      <h3>Technology is one part of the picture.</h3>
+      <div className="sidecard-kicker">THE WORK AROUND THE CODE</div>
+      <h3>Technical skills, applied to real problems.</h3>
       <div className="toolkit-block">
-        <span className="toolkit-label">VISUAL COMMUNICATION</span>
-        <p>Photoshop · Canva · Blender · Graphic design</p>
-        <small>Thinking about hierarchy, composition and how a message is seen.</small>
+        <span className="toolkit-label">PROJECT DELIVERY</span>
+        <p>Data preparation · Modelling · APIs · Dashboards</p>
+        <small>From cleaning and analysing data to building usable applications around the results.</small>
       </div>
       <div className="toolkit-block">
-        <span className="toolkit-label">PEOPLE & DELIVERY</span>
-        <p>Creative direction · Team coordination · Collaboration</p>
+        <span className="toolkit-label">CREATIVE COLLABORATION</span>
+        <p>Design review · Content planning · Cross-team coordination</p>
         <small>Experience through Digital Creatives at IETE-SF, NMIMS.</small>
       </div>
       <div className="toolkit-block">
-        <span className="toolkit-label">WHAT I KEEP EXPLORING</span>
-        <p>Product strategy · Business · Entrepreneurship</p>
-        <small>How useful ideas become products people want to use.</small>
+        <span className="toolkit-label">COMMUNITY & LEARNING</span>
+        <p>Tutoring · Explaining ideas · Educational activities</p>
+        <small>Volunteer experience supporting students through Being Child Care NGO.</small>
       </div>
     </aside>
 
@@ -205,7 +199,7 @@ export function Overlay({ progress, selectedProject, onSelectProject, onNavigate
           <p className="eyebrow">04 / SELECTED PROJECTS</p>
           <h2>Selected work.<br/>Real problems.</h2>
         </div>
-        <p className="projects-intro">I’m most interested in projects that turn a complex problem into something understandable and useful. Open a case study to see the challenge, approach, stack and outcome.</p>
+        <p className="projects-intro">Four projects across database security, UPI fraud detection, career recommendations and legal NLP. Open a case study to explore the challenge, approach, technology and reported results.</p>
       </div>
       <div className="project-showcase-grid">
         {portfolio.projects.map((project) => <article className="project-card interactive-project" key={project.number} role="button" tabIndex={0} onClick={() => onSelectProject(project.number)} onKeyDown={activateOnKeyboard(() => onSelectProject(project.number))} aria-label={`Open details for ${project.title}`}>
@@ -217,7 +211,7 @@ export function Overlay({ progress, selectedProject, onSelectProject, onNavigate
           <div className="project-card-footer"><span>VIEW CASE STUDY</span><span>↗</span></div>
         </article>)}
       </div>
-      <div className="project-section-note"><span>03 PROJECTS</span><i /> <span>SELECT A CARD OR A 3D LOCKER TO EXPLORE THE DETAILS</span></div>
+      <div className="project-section-note"><span>04 PROJECTS</span><i /> <span>SELECT A CARD OR A 3D LOCKER TO EXPLORE THE DETAILS</span></div>
     </section>
 
     <section className="copy copy--finale" style={{ opacity: finale, visibility: active === 4 ? 'visible' : 'hidden' }}>
@@ -237,8 +231,12 @@ export function Overlay({ progress, selectedProject, onSelectProject, onNavigate
         </article>)}
       </div>
       <div className="certification-strip">
-        <div className="certification-heading"><span>CONTINUED LEARNING</span><small>Courses & foundations</small></div>
+        <div className="certification-heading"><span>CERTIFICATIONS</span><small>Completed courses</small></div>
         <div className="certification-list">{portfolio.certifications.map((certification) => <span key={certification}>{certification}</span>)}</div>
+      </div>
+      <div className="coursework-strip">
+        <div className="coursework-heading"><span>RELEVANT COURSEWORK</span><small>Academic foundations</small></div>
+        <div className="coursework-list">{portfolio.coursework.map((item) => <article className="coursework-item" key={item.category}><strong>{item.category}</strong><p>{item.topics}</p></article>)}</div>
       </div>
       <button className="walkout-cta" onClick={() => goto(0.94)}>Let’s connect <span>→</span></button>
     </section>
