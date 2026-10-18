@@ -3291,3 +3291,22 @@ html, body, button, input, textarea, select {
   .coursework-item strong { font-size: 10px; }
   .coursework-item p { font-size: 9.5px; line-height: 1.7; }
 }
+
+
+.contact-phone-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 5px;
+  margin-top: 15px;
+}
+.contact-phone-row .contact-card-caption { margin: 0; }
+.contact-phone {
+  color: #f6f2e6;
+  font: 500 clamp(17px, 1.5vw, 21px)/1.4 var(--font-display);
+  letter-spacing: .005em;
+  pointer-events: auto;
+}
+.contact-phone:hover { color: #e6d3a1; }
+@media (max-width: 760px) {
+  .contact-phone { font-size: 18px; }
+}
