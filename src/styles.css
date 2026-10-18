@@ -4462,3 +4462,11 @@ html, body, button, input, textarea, select {
   .section-rail button,
   .section-rail button b { transition: none; }
 }
+
+
+/* The right-side chapter rail is intentionally removed; top navigation stays as the primary navigator. */
+.section-rail {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
