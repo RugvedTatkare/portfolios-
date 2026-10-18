@@ -4307,3 +4307,158 @@ html, body, button, input, textarea, select {
     transform: none !important;
   }
 }
+
+
+/* Signature chapter navigator — an editorial timeline instead of a cramped pill list */
+@media (min-width: 761px) {
+  .section-rail {
+    position: fixed;
+    z-index: 28;
+    top: 50%;
+    right: clamp(18px, 2vw, 30px);
+    width: 166px;
+    max-width: 166px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+    padding: 17px 9px 10px;
+    overflow: visible;
+    border: 1px solid rgba(243, 238, 225, .22);
+    border-radius: 13px;
+    background:
+      linear-gradient(155deg, rgba(49, 63, 72, .96), rgba(31, 41, 48, .97));
+    box-shadow: 0 18px 42px rgba(20, 27, 31, .2), inset 0 1px 0 rgba(255,255,255,.1);
+    color: rgba(249, 246, 237, .67);
+    transform: translateY(-50%);
+    -webkit-backdrop-filter: blur(20px) saturate(125%);
+    backdrop-filter: blur(20px) saturate(125%);
+  }
+  .section-rail::after {
+    content: "CHAPTERS";
+    position: absolute;
+    top: -21px;
+    left: 14px;
+    color: rgba(248, 243, 231, .68);
+    font: 8px/1.4 var(--font-label);
+    letter-spacing: .19em;
+    pointer-events: none;
+  }
+  .section-rail::before {
+    content: "";
+    position: absolute;
+    top: 27px;
+    bottom: 20px;
+    left: 27px;
+    width: 1px;
+    background: linear-gradient(
+      to bottom,
+      rgba(207, 163, 125, .72),
+      rgba(233, 224, 203, .17) 65%,
+      rgba(233, 224, 203, .06)
+    );
+    pointer-events: none;
+  }
+  .section-rail button {
+    position: relative;
+    display: grid;
+    grid-template-columns: 26px minmax(0, 1fr);
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    min-width: 0;
+    min-height: 34px;
+    margin: 0;
+    padding: 7px 7px;
+    border: 1px solid transparent;
+    border-radius: 7px;
+    background: transparent;
+    color: rgba(249, 246, 237, .66);
+    text-align: left;
+    transform: none;
+    transition: background 180ms ease, border-color 180ms ease, color 180ms ease, transform 180ms ease;
+    pointer-events: auto;
+  }
+  .section-rail button b {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    border: 1px solid rgba(234, 222, 198, .22);
+    border-radius: 50%;
+    background: #293740;
+    color: rgba(248, 243, 231, .72);
+    font: 8px/1 var(--font-label);
+    letter-spacing: -.02em;
+    font-weight: 400;
+    transition: background 180ms ease, border-color 180ms ease, color 180ms ease;
+  }
+  .section-rail button span {
+    display: block;
+    min-width: 0;
+    max-width: none;
+    color: inherit;
+    font: 500 8px/1.45 var(--font-label);
+    letter-spacing: .055em;
+    text-align: left;
+    text-transform: uppercase;
+    white-space: normal;
+    overflow-wrap: normal;
+    word-break: normal;
+    transition: color 180ms ease;
+  }
+  .section-rail button:hover,
+  .section-rail button:focus-visible {
+    border-color: rgba(244, 217, 181, .25);
+    background: rgba(255, 250, 240, .07);
+    color: #fff9ed;
+    outline: none;
+    transform: translateX(-2px);
+  }
+  .section-rail button:hover b,
+  .section-rail button:focus-visible b {
+    border-color: rgba(221, 169, 130, .75);
+    color: #f1c69f;
+  }
+  .section-rail button.is-active {
+    border-color: rgba(248, 226, 194, .25);
+    background: linear-gradient(100deg, #f0e5d2, #e5d5bc);
+    color: #27343b;
+    box-shadow: 0 5px 14px rgba(9, 15, 19, .15);
+    transform: translateX(-5px);
+  }
+  .section-rail button.is-active b {
+    border-color: #a9664e;
+    color: #fff8ec;
+    background: #a9664e;
+  }
+  .section-rail button.is-active span {
+    color: #26343c;
+    font-weight: 700;
+  }
+}
+
+@media (min-width: 761px) and (max-width: 1180px) {
+  .section-rail {
+    right: 12px;
+    width: 142px;
+    max-width: 142px;
+    padding: 14px 7px 8px;
+  }
+  .section-rail button {
+    grid-template-columns: 23px minmax(0,1fr);
+    gap: 6px;
+    padding: 6px 5px;
+    min-height: 32px;
+  }
+  .section-rail button b { width: 22px; height: 22px; font-size: 7px; }
+  .section-rail button span { font-size: 7px; letter-spacing: .035em; }
+  .section-rail::before { left: 22px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section-rail button,
+  .section-rail button b { transition: none; }
+}
