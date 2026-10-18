@@ -697,8 +697,8 @@ function LockerRoom({ onSelectProject }: { onSelectProject: (number: string) => 
       <LockerRoomInteriorFinishes />
       {sidePositions.map((z, i) => (
         <group key={z}>
-          {/* These three positions are reserved for project-filled sports lockers. */}
-          {!([1, 3, 5] as number[]).includes(i) && <SideSportsLocker side={-1} z={z} number={i} />}
+          {/* Leave an alternating bay for each of the four featured projects. */}
+          {!([1, 3, 5, 7] as number[]).includes(i) && <SideSportsLocker side={-1} z={z} number={i} />}
           <SideSportsLocker side={1} z={z} number={i + 8} />
           {[-1, 1].map((side) => (
             <mesh key={side} position={[side * 8.9, 0.42, z]} castShadow receiveShadow>
@@ -720,7 +720,7 @@ function LockerRoom({ onSelectProject }: { onSelectProject: (number: string) => 
       ))}
       {/* Project information is built into three full sports lockers along the left wall. */}
       {portfolio.projects.map((project, i) => {
-        const projectZ = [-65.5, -76.5, -87.5][i];
+        const projectZ = [-65.5, -76.5, -87.5, -98.5][i];
         return (
           <ProjectLocker
             key={project.number}
