@@ -4198,3 +4198,64 @@ html, body, button, input, textarea, select {
   .editorial-sidecard.contact-sidecard { display: none; }
   .locker-explore-panel { left: 12px; right: 12px; width: auto; }
 }
+
+
+/* Header alignment: keep the primary navigation centred to the viewport */
+@media (min-width: 761px) {
+  .topbar {
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr) auto;
+    align-items: center;
+  }
+  .topbar nav {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: max-content;
+    max-width: calc(100% - 330px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: clamp(16px, 2.1vw, 32px);
+    margin: 0;
+    padding: 0;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+    pointer-events: auto;
+  }
+  .topbar nav a {
+    flex: 0 0 auto;
+    padding: 8px 2px;
+    text-align: center;
+  }
+  .topbar-meta {
+    grid-column: 2;
+    justify-self: end;
+    align-items: center;
+    gap: 15px;
+    margin: 0 18px 0 0;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  .topbar .topbar-link {
+    grid-column: 3;
+    justify-self: end;
+    white-space: nowrap;
+  }
+}
+@media (min-width: 761px) and (max-width: 1180px) {
+  .topbar {
+    grid-template-columns: 42px minmax(0, 1fr) auto;
+    padding-inline: 14px;
+  }
+  .topbar-meta { display: none; }
+  .topbar nav {
+    max-width: calc(100% - 155px);
+    gap: clamp(12px, 1.65vw, 19px);
+  }
+  .topbar nav a { font-size: 9px; }
+  .topbar .topbar-link { font-size: 8px; padding: 9px 11px; }
+}
+@media (max-width: 760px) {
+  .topbar nav { display: none; }
+}
