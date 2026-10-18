@@ -4470,3 +4470,23 @@ html, body, button, input, textarea, select {
   visibility: hidden !important;
   pointer-events: none !important;
 }
+
+
+/* Center the complete Projects chapter after removing the right-side rail.
+   Preserve its internal left alignment; only centre the chapter container itself. */
+@media (min-width: 761px) {
+  .copy.copy--projects {
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    box-sizing: border-box;
+  }
+  .copy.copy--projects .projects-heading,
+  .copy.copy--projects .project-showcase-grid,
+  .copy.copy--projects .project-section-note {
+    box-sizing: border-box;
+    width: 100%;
+  }
+}
