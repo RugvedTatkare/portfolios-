@@ -4490,3 +4490,31 @@ html, body, button, input, textarea, select {
     width: 100%;
   }
 }
+
+
+/* Center the full Experience chapter panel, matching the Projects chapter alignment. */
+@media (min-width: 761px) {
+  .copy.copy--finale {
+    left: 50% !important;
+    right: auto !important;
+    transform: translate(-50%, 0) !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    box-sizing: border-box;
+  }
+  .copy.copy--finale .experience-heading,
+  .copy.copy--finale .experience-showcase,
+  .copy.copy--finale .certification-strip,
+  .copy.copy--finale .coursework-strip {
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+@media (max-width: 760px) {
+  .copy.copy--finale {
+    left: 10px !important;
+    right: 10px !important;
+    width: auto !important;
+    transform: none !important;
+  }
+}
