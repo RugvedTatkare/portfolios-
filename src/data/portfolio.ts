@@ -179,5 +179,6 @@ export const portfolio = {
     github: 'https://github.com/RugvedTatkare',
     linkedin: 'https://www.linkedin.com/in/rugved-tatkare',
     email: 'mailto:rugved1206@gmail.com',
+    phone: '+91 77388 28024',
   },
 } as const;
