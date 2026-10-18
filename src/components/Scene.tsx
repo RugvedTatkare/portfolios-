@@ -42,7 +42,7 @@ function CorridorInteriorFinishes() {
       {/* A bespoke stone-and-green terrazzo floor with fine brass datum lines. */}
       <mesh position={[0, 0.025, -25]}>
         <boxGeometry args={[4.55, 0.035, 57.5]} />
-        <meshStandardMaterial color="#344b3e" roughness={0.38} metalness={0.08} />
+        <meshStandardMaterial color="#46545b" roughness={0.38} metalness={0.08} />
       </mesh>
       {[-1, 1].map((side) => (
         <mesh key={side} position={[side * 3.63, 0.019, -25]}>
@@ -70,7 +70,7 @@ function CorridorInteriorFinishes() {
             <group key={side}>
               <mesh position={[side * 4.98, 1.45, z]}>
                 <boxGeometry args={[0.075, 1.58, 6.42]} />
-                <meshStandardMaterial color={i % 2 ? "#304b3e" : "#243f34"} roughness={0.58} metalness={0.08} />
+                <meshStandardMaterial color={i % 2 ? "#465158" : "#35434a"} roughness={0.58} metalness={0.08} />
               </mesh>
               <mesh position={[side * 4.975, 3.48, z]}>
                 <boxGeometry args={[0.065, 2.36, 6.42]} />
@@ -99,7 +99,7 @@ function CorridorInteriorFinishes() {
           {([-1, 1] as const).map((side) => (
             <mesh key={side} position={[side * 4.925, 3.0, z]}>
               <boxGeometry args={[0.07, 5.22, i % 3 === 0 ? 0.13 : 0.075]} />
-              <meshStandardMaterial color={i % 3 === 0 ? "#6c553d" : "#314b3d"} roughness={0.48} metalness={0.12} />
+              <meshStandardMaterial color={i % 3 === 0 ? "#6c553d" : "#46545a"} roughness={0.48} metalness={0.12} />
             </mesh>
           ))}
         </group>
@@ -131,7 +131,7 @@ function LockerRoomInteriorFinishes() {
       {/* Custom inset-floor composition: a dark runner, stone side tiles and brass seams. */}
       <mesh position={[0, 0.026, -81.5]}>
         <boxGeometry args={[5.95, 0.04, 55.9]} />
-        <meshStandardMaterial color="#324a3d" roughness={0.4} metalness={0.08} />
+        <meshStandardMaterial color="#425159" roughness={0.4} metalness={0.08} />
       </mesh>
       {[-1, 1].map((side) => (
         <mesh key={side} position={[side * 7.35, 0.018, -81.5]}>
@@ -163,7 +163,7 @@ function LockerRoomInteriorFinishes() {
               </mesh>
               <mesh position={[side * 11.775, 1.26, z]}>
                 <boxGeometry args={[0.045, 1.82, 5.72]} />
-                <meshStandardMaterial color={i % 2 ? "#263e33" : "#304b3e"} roughness={0.54} metalness={0.12} />
+                <meshStandardMaterial color={i % 2 ? "#33434a" : "#465158"} roughness={0.54} metalness={0.12} />
               </mesh>
               {[-2.92, 2.92].map((offset) => (
                 <mesh key={offset} position={[side * 11.72, 3.1, z + offset]}>
@@ -225,12 +225,12 @@ function LockerRoomInteriorFinishes() {
           </mesh>
           <mesh position={[0, -0.18, 0.126]} castShadow>
             <boxGeometry args={[4.32, 0.56, 0.055]} />
-            <meshStandardMaterial color="#0d3025" roughness={0.4} metalness={0.16} />
+            <meshStandardMaterial color="#26363d" roughness={0.4} metalness={0.16} />
           </mesh>
           {/* Thin inset border and a small illuminated gold keyline. */}
           <mesh position={[0, -0.18, 0.157]}>
             <boxGeometry args={[4.16, 0.42, 0.012]} />
-            <meshStandardMaterial color="#174334" roughness={0.48} metalness={0.08} />
+            <meshStandardMaterial color="#3e5057" roughness={0.48} metalness={0.08} />
           </mesh>
           <mesh position={[-1.94, -0.18, 0.168]}>
             <boxGeometry args={[0.035, 0.37, 0.014]} />
@@ -244,7 +244,7 @@ function LockerRoomInteriorFinishes() {
             color="#e7cd92"
             letterSpacing={0.055}
             outlineWidth={0.0015}
-            outlineColor="#0b2c21"
+            outlineColor="#233238"
           >
             {sign.number} / WAYFINDING
           </Text>
@@ -272,7 +272,7 @@ function LockerRoomInteriorFinishes() {
             color="#d3dfce"
             letterSpacing={0.055}
             outlineWidth={0.001}
-            outlineColor="#0b2c21"
+            outlineColor="#233238"
           >
             {sign.label}
           </Text>
@@ -288,7 +288,7 @@ function TunnelInteriorFinishes() {
     <group>
       <mesh position={[0, 0.04, -123.3]}>
         <boxGeometry args={[5.25, 0.035, 29.4]} />
-        <meshStandardMaterial color="#253d32" roughness={0.38} metalness={0.12} />
+        <meshStandardMaterial color="#3b4950" roughness={0.38} metalness={0.12} />
       </mesh>
       {[-2.72, 2.72, -6.05, 6.05].map((x) => (
         <mesh key={x} position={[x, 0.067, -123.3]}>
@@ -302,7 +302,7 @@ function TunnelInteriorFinishes() {
             <group key={side}>
               <mesh position={[side * 6.47, 2.35, z]}>
                 <boxGeometry args={[0.055, 2.85, 5.35]} />
-                <meshStandardMaterial color={i % 2 ? "#344b3d" : "#273e33"} roughness={0.54} metalness={0.12} />
+                <meshStandardMaterial color={i % 2 ? "#344b3d" : "#303d44"} roughness={0.54} metalness={0.12} />
               </mesh>
               <mesh position={[side * 6.42, 2.36, z - 2.61]}>
                 <boxGeometry args={[0.04, 4.25, 0.055]} />
@@ -515,15 +515,15 @@ function WallArt({side,z,title,sub}:{side:-1|1;z:number;title:string;sub:string}
   return <group position={[side*4.91,2.55,z]} rotation={[0,side === 1 ? -Math.PI/2 : Math.PI/2,0]}>
     {/* A framed editorial panel with court-line artwork and a warm edge reveal. */}
     <mesh position={[0,0,-.07]}><boxGeometry args={[2.72,3.78,.16]}/><meshStandardMaterial color="#b59a67" metalness={.58} roughness={.34}/></mesh>
-    <mesh position={[0,0,-.015]}><boxGeometry args={[2.58,3.64,.12]}/><meshStandardMaterial color="#182b24" roughness={.68}/></mesh>
-    <mesh position={[0,0,.052]}><planeGeometry args={[2.42,3.48]}/><meshStandardMaterial color="#293e32" roughness={.72}/></mesh>
-    <mesh position={[0,-.3,.061]}><planeGeometry args={[1.68,1.32]}/><meshBasicMaterial color="#334d3e"/></mesh>
+    <mesh position={[0,0,-.015]}><boxGeometry args={[2.58,3.64,.12]}/><meshStandardMaterial color="#27363c" roughness={.68}/></mesh>
+    <mesh position={[0,0,.052]}><planeGeometry args={[2.42,3.48]}/><meshStandardMaterial color="#3b4a50" roughness={.72}/></mesh>
+    <mesh position={[0,-.3,.061]}><planeGeometry args={[1.68,1.32]}/><meshBasicMaterial color="#46545a"/></mesh>
     {[-.76,0,.76].map((x)=><mesh key={x} position={[x,-.3,.07]}><boxGeometry args={[.018,1.26,.012]}/><meshBasicMaterial color="#d8c79f"/></mesh>)}
     {[-.95,-.3,.35].map((y)=><mesh key={y} position={[0,y,.071]}><boxGeometry args={[1.68,.018,.012]}/><meshBasicMaterial color="#d8c79f"/></mesh>)}
     <mesh position={[0,-.3,.075]}><torusGeometry args={[.33,.015,5,32]}/><meshBasicMaterial color="#d5be8c"/></mesh>
-    <Text position={[-1.03,1.3,.09]} anchorX="left" fontSize={.115} maxWidth={2.0} color="#e3c98a" letterSpacing={.105} outlineWidth={.0015} outlineColor="#182b24">CLUB NOTES / 0{side === 1 ? '1' : '2'}</Text>
-    <Text position={[-1.03,.91,.09]} anchorX="left" fontSize={.265} maxWidth={2.0} color="#fff9e9" letterSpacing={.012} outlineWidth={.002} outlineColor="#182b24">{title}</Text>
-    <Text position={[-1.03,-1.23,.09]} anchorX="left" fontSize={.108} maxWidth={2.05} color="#e0e8d7" lineHeight={1.35} outlineWidth={.0015} outlineColor="#182b24">{sub}</Text>
+    <Text position={[-1.03,1.3,.09]} anchorX="left" fontSize={.115} maxWidth={2.0} color="#e3c98a" letterSpacing={.105} outlineWidth={.0015} outlineColor="#27363c">CLUB NOTES / 0{side === 1 ? '1' : '2'}</Text>
+    <Text position={[-1.03,.91,.09]} anchorX="left" fontSize={.265} maxWidth={2.0} color="#fff9e9" letterSpacing={.012} outlineWidth={.002} outlineColor="#27363c">{title}</Text>
+    <Text position={[-1.03,-1.23,.09]} anchorX="left" fontSize={.108} maxWidth={2.05} color="#e0e8d7" lineHeight={1.35} outlineWidth={.0015} outlineColor="#27363c">{sub}</Text>
     <mesh position={[-.57,-1.48,.09]}><boxGeometry args={[.92,.025,.012]}/><meshBasicMaterial color="#c6a46b"/></mesh>
   </group>
 }
@@ -537,7 +537,7 @@ function ProjectLocker({ project, index, position, rotationY = 0, onSelect }: {
   rotationY?: number;
   onSelect: () => void;
 }) {
-  const teamColors = ['#1e684f', '#27675e', '#2d5065'];
+  const teamColors = ['#5b7182', '#b66c53', '#c5a05d'];
   const accent = teamColors[index % teamColors.length];
   const bars = [0.28, 0.42, 0.35, 0.65, 0.48, 0.76, 0.56];
   return (
@@ -562,7 +562,7 @@ function ProjectLocker({ project, index, position, rotationY = 0, onSelect }: {
         {/* Painted team-kit locker shell */}
         <mesh position={[0, 0, -0.15]} castShadow receiveShadow>
           <boxGeometry args={[4.45, 3.72, 0.32]} />
-          <meshStandardMaterial color="#1c302b" metalness={0.36} roughness={0.43} />
+          <meshStandardMaterial color="#29383d" metalness={0.36} roughness={0.43} />
         </mesh>
         <mesh position={[0, 0, 0.025]}>
           <boxGeometry args={[4.21, 3.49, 0.06]} />
@@ -570,7 +570,7 @@ function ProjectLocker({ project, index, position, rotationY = 0, onSelect }: {
         </mesh>
         <mesh position={[0, -0.03, 0.07]}>
           <boxGeometry args={[3.98, 2.82, 0.045]} />
-          <meshPhysicalMaterial color="#10201d" metalness={0.12} roughness={0.35} clearcoat={0.5} />
+          <meshPhysicalMaterial color="#162429" metalness={0.12} roughness={0.35} clearcoat={0.5} />
         </mesh>
         {/* Fine brass reveal around each board, like a gallery-quality display case. */}
         {[-1, 1].map((side) => (
@@ -592,7 +592,7 @@ function ProjectLocker({ project, index, position, rotationY = 0, onSelect }: {
         {/* Locker crown with perforated vents and club numbering */}
         <mesh position={[0, 1.55, 0.13]}>
           <boxGeometry args={[4.21, 0.36, 0.12]} />
-          <meshStandardMaterial color="#173b31" metalness={0.28} roughness={0.4} />
+          <meshStandardMaterial color="#37464b" metalness={0.28} roughness={0.4} />
         </mesh>
         {Array.from({ length: 10 }, (_, i) => (
           <mesh key={i} position={[-1.83 + i * 0.13, 1.56, 0.2]}>
@@ -660,7 +660,7 @@ function ProjectLocker({ project, index, position, rotationY = 0, onSelect }: {
           <boxGeometry args={[1.12, 0.25, 0.045]} />
           <meshStandardMaterial color="#d4e4d3" roughness={0.45} />
         </mesh>
-        <Text position={[1.44, -1.42, 0.23]} anchorX="center" fontSize={0.065} color="#173b31" letterSpacing={0.02}>
+        <Text position={[1.44, -1.42, 0.23]} anchorX="center" fontSize={0.065} color="#37464b" letterSpacing={0.02}>
           OPEN LOCKER ↗
         </Text>
       </group>
