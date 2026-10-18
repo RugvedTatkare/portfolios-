@@ -196,25 +196,85 @@ function LockerRoomInteriorFinishes() {
         </group>
       ))}
 
-      {/* Small illuminated plaques bring the room's repeated bays together. */}
-      {[-59.2, -71.4, -83.6, -95.8, -105.8].map((z, i) => (
-        <group key={z} position={[0, 5.86, z]}>
-          <mesh>
-            <boxGeometry args={[3.3, 0.07, 0.18]} />
-            <meshStandardMaterial color="#b99a60" metalness={0.68} roughness={0.28} />
-          </mesh>
-          <mesh position={[0, -0.14, 0]}>
-            <boxGeometry args={[2.6, 0.025, 0.09]} />
-            <meshBasicMaterial color={i % 2 ? "#d4d4bf" : "#a8d0c4"} />
-          </mesh>
-          {[-1.43, 1.43].map((x) => (
-            <mesh key={x} position={[x, 0.39, 0]}>
-              <boxGeometry args={[0.025, 0.78, 0.025]} />
-              <meshStandardMaterial color="#b99a60" metalness={0.72} roughness={0.28} />
-            </mesh>
+      {/* Suspended editorial wayfinding signs: deep enamel faces, brass edging and large readable type. */}
+      {[
+        { z: -59.2, number: '01', title: 'ANALYSE / DESIGN', label: 'DEFINE THE PROBLEM' },
+        { z: -71.4, number: '02', title: 'SOLVE / BUILD', label: 'TURN IDEAS INTO TOOLS' },
+        { z: -83.6, number: '03', title: 'TEST / REFINE', label: 'LEARN FROM THE RESULT' },
+        { z: -95.8, number: '04', title: 'PLAY THE LONG GAME', label: 'KEEP EXPLORING' },
+        { z: -105.8, number: '05', title: 'COURT 01', label: 'THE NEXT POINT' },
+      ].map((sign) => (
+        <group key={sign.number} position={[0, 5.86, sign.z]}>
+          {/* Suspension cables and slim gold mounts */}
+          {[-1.82, 1.82].map((x) => (
+            <group key={x} position={[x, 0.38, 0]}>
+              <mesh>
+                <boxGeometry args={[0.025, 0.76, 0.025]} />
+                <meshStandardMaterial color="#b99a60" metalness={0.72} roughness={0.27} />
+              </mesh>
+              <mesh position={[0, -0.345, 0.018]}>
+                <boxGeometry args={[0.12, 0.035, 0.06]} />
+                <meshStandardMaterial color="#ddc28a" metalness={0.62} roughness={0.3} />
+              </mesh>
+            </group>
           ))}
-          <Text position={[0, -0.15, 0.095]} anchorX="center" fontSize={0.105} color="#173b2b" letterSpacing={0.075} outlineWidth={0.002} outlineColor="#edf2df">
-            {['ANALYSE / DESIGN', 'SOLVE / BUILD', 'TEST / REFINE', 'PLAY THE LONG GAME', 'COURT 01'][i]}
+          {/* Brass shadow frame gives the plaque a precise, finished silhouette. */}
+          <mesh position={[0, -0.18, 0.035]} castShadow>
+            <boxGeometry args={[4.42, 0.66, 0.16]} />
+            <meshStandardMaterial color="#b99a60" metalness={0.68} roughness={0.3} />
+          </mesh>
+          <mesh position={[0, -0.18, 0.126]} castShadow>
+            <boxGeometry args={[4.32, 0.56, 0.055]} />
+            <meshStandardMaterial color="#0d3025" roughness={0.4} metalness={0.16} />
+          </mesh>
+          {/* Thin inset border and a small illuminated gold keyline. */}
+          <mesh position={[0, -0.18, 0.157]}>
+            <boxGeometry args={[4.16, 0.42, 0.012]} />
+            <meshStandardMaterial color="#174334" roughness={0.48} metalness={0.08} />
+          </mesh>
+          <mesh position={[-1.94, -0.18, 0.168]}>
+            <boxGeometry args={[0.035, 0.37, 0.014]} />
+            <meshBasicMaterial color="#e4c783" />
+          </mesh>
+          <Text
+            position={[-1.78, -0.085, 0.184]}
+            anchorX="left"
+            anchorY="middle"
+            fontSize={0.055}
+            color="#e7cd92"
+            letterSpacing={0.055}
+            outlineWidth={0.0015}
+            outlineColor="#0b2c21"
+          >
+            {sign.number} / WAYFINDING
+          </Text>
+          <Text
+            position={[0.04, -0.205, 0.186]}
+            anchorX="center"
+            anchorY="middle"
+            fontSize={sign.title === 'PLAY THE LONG GAME' ? 0.143 : 0.165}
+            color="#fff8e8"
+            letterSpacing={0.018}
+            outlineWidth={0.002}
+            outlineColor="#08251c"
+          >
+            {sign.title}
+          </Text>
+          <mesh position={[0, -0.4, 0.17]}>
+            <boxGeometry args={[3.85, 0.012, 0.012]} />
+            <meshBasicMaterial color="#7b986f" />
+          </mesh>
+          <Text
+            position={[0, -0.475, 0.184]}
+            anchorX="center"
+            anchorY="middle"
+            fontSize={0.052}
+            color="#d3dfce"
+            letterSpacing={0.055}
+            outlineWidth={0.001}
+            outlineColor="#0b2c21"
+          >
+            {sign.label}
           </Text>
         </group>
       ))}
