@@ -255,6 +255,10 @@ export function Overlay({ progress, selectedProject, onSelectProject, onNavigate
       <div className="sidecard-kicker">SAY HELLO</div>
       <span className="contact-card-caption">EMAIL</span>
       <a className="contact-email" href={portfolio.socials.email}>rugved1206@gmail.com <span>↗</span></a>
+      <div className="contact-phone-row">
+        <span className="contact-card-caption">PHONE</span>
+        <a className="contact-phone" href={`tel:${portfolio.socials.phone.replace(/[^+\d]/g, '')}`}>{portfolio.socials.phone}</a>
+      </div>
       <div className="contact-card-rule" />
       <span className="contact-card-caption">FIND ME ELSEWHERE</span>
       <a className="contact-social-link" href={portfolio.socials.linkedin} target="_blank" rel="noreferrer"><span>LinkedIn</span><b>Professional updates & conversations</b><i>↗</i></a>
